@@ -21,7 +21,6 @@ public class UserController implements UserInterface {
             Toast.makeText(context, "Username don't exist", Toast.LENGTH_SHORT).show();
             return false;
         }
-
     }
 
     @Override
@@ -48,6 +47,5 @@ public class UserController implements UserInterface {
     public int expforLvl(User curruser) {
         int lvl=curruser.getLvl();
         return (lvl * 1000);
-
     }
 }
