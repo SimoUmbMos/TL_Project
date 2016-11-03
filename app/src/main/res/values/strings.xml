@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">TL_Project</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_login">Login</string>
+    <string name="username">UserName :</string>
+    <string name="password">PassWord :</string>
+    <string name="login">Login</string>
+    <string name="loginb">Login</string>
+    <string name="registb">Regist</string>
+    <string name="logo">Logo</string>
+    <string name="actionbutton">action</string>
+    <string name="profilebutton">Profile</string>
+    <string name="logoutbutton">logout</string>
+    <string name="regist">Regist:</string>
+    <string name="usernamer">Username:</string>
+    <string name="passwordr">Password:</string>
+    <string name="confirm_password">Confirm Password:</string>
+    <string name="register">Register</string>
+    <string name="title_activity_regist">Register</string>
+    <string name="usernamet">[username]</string>
+    <string name="curexp">[curexp]</string>
+    <string name="exp">exp:</string>
+    <string name="nextlvlexp">[nextlvlexp]</string>
+    <string name="back">Back</string>
+    <string name="lvl">[lvl]</string>
+    <string name="userprofile">UserProfile:</string>
+    <string name="level">Level:</string>
+    <string name="current_quest">Current Quest</string>
+    <string name="title_activity_profile">Profile</string>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <!--
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=32:24:20:71:0A:67:0C:1B:48:E8:C8:9C:DF:23:D2:76:A2:FC:09:2C%3Bcom.tlproject.omada1.tl_project
+    You can also add your credentials to an existing key, using this line:
+    32:24:20:71:0A:67:0C:1B:48:E8:C8:9C:DF:23:D2:76:A2:FC:09:2C;com.tlproject.omada1.tl_project
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyBvRBW-u8q4yUZgtMwrthbyfVi8XYsYAaw
+    </string>
+</resources>
