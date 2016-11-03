@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.User;
 
