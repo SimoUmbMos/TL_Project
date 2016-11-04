@@ -15,11 +15,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.tlproject.omada1.tl_project.Controller.QuestController;
+import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
+import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private GPSTracker gps;
+    private Quest CurQuest;
     private double Lat, Long;
     private User Curruser;
     private GoogleMap mMap;
@@ -28,6 +32,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        CurQuest=new Quest();
         Lat = 0;
         Long = 0;
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -52,6 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        setquestonmap(CurQuest.getLat(),CurQuest.getLng());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         mMap.setMyLocationEnabled(true);
         LatLng Loc = new LatLng(Lat,Long);
@@ -68,11 +74,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void ProfileClick(View view) {
         Intent intent=new Intent(MapsActivity.this,ProfileActivity.class);
         intent.putExtra("User", Curruser.ToString());
+        intent.putExtra("Quest", CurQuest.ToString());
         startActivity(intent);
+
     }
     void setquestonmap(double lat,double lng){
         mMap.clear();
-        mMap.addCircle(new CircleOptions().center(new LatLng(lat,lng)).radius(15).strokeColor(Color.RED).fillColor(Color.BLUE));
+        mMap.addCircle(new CircleOptions().center(new LatLng(lat,lng)).radius(60).strokeColor(Color.RED).fillColor(Color.BLUE));
         mMap.addMarker(new MarkerOptions().position(new LatLng(lat,lng)).title("Current Quest"));
     }
     float distof(double lat1,double lng1,double lat2,double lng2){
@@ -85,4 +93,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         loc2.setLongitude(lng2);
         return loc1.distanceTo(loc2);
     }
+
+    public void ActionClick(View view) {
+        QuestController CurController=new QuestController();
+        UserController CurUController=new UserController();
+        if(CurController.QuestIsTrue(CurQuest)) {
+            if (gps.canGetLocation()) {
+                Lat = gps.getLatitude();
+                Long = gps.getLongitude();
+            } else {
+                gps.showSettingsAlert();
+            }
+            gps.stopUsingGPS();
+            float meter=distof(Lat,Long,CurQuest.getLat(),CurQuest.getLng());
+            if(meter<=60) {
+                Curruser=CurUController.QuestComplete(Curruser,CurQuest);
+                CurQuest = CurController.NextQuest(CurQuest);
+                setquestonmap(CurQuest.getLat(),CurQuest.getLng());
+            }
+
+        }
+
+
+    }
+
 }
