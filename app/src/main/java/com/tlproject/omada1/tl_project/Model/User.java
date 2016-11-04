@@ -41,6 +41,14 @@ public class User {
      */
     public int getExp(){return exp;}
     /**
+     * Set user Level
+     */
+    public void setLvl(int lvl1){lvl=lvl1;}
+    /**
+     * Set user experience point
+     */
+    public void setExp(int exp1){exp=exp1;}
+    /**
      * Set user data from a string with a format like User.toString();
      */
     public void setUser(String userS){
@@ -92,4 +100,5 @@ public class User {
     public String ToString(){
         return (username+";"+password+";"+String.valueOf(lvl)+";"+String.valueOf(exp)+";");
     }
+    
 }
