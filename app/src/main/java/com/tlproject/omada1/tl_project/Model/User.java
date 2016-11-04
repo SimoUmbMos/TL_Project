@@ -14,6 +14,8 @@ public class User {
     }
     public int getLvl(){return lvl;}
     public int getExp(){return exp;}
+    public void setLvl(int lvl1){lvl=lvl1;}
+    public void setExp(int exp1){exp=exp1;}
     public void setUser(String userS){
         char c;
         String tempS="";
@@ -54,4 +56,5 @@ public class User {
     public String ToString(){
         return (username+";"+password+";"+String.valueOf(lvl)+";"+String.valueOf(exp)+";");
     }
+    
 }

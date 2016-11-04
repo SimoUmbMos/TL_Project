@@ -120,4 +120,16 @@
         android:layout_alignLeft="@+id/textView13"
         android:layout_alignStart="@+id/textView13" />
 
+    <TextView
+        android:text="@string/questdesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/questdesc"
+        android:layout_below="@+id/textView14"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/textView13"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

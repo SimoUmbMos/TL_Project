@@ -27,4 +27,5 @@
     <string name="level">Level:</string>
     <string name="current_quest">Current Quest</string>
     <string name="title_activity_profile">Profile</string>
+    <string name="questdesc">[QuestDesc]</string>
 </resources>
