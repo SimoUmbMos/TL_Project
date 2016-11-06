@@ -9,8 +9,18 @@ import com.tlproject.omada1.tl_project.Model.Quest;
 public class QuestController implements QuestInterface {
     @Override
     public Quest NextQuest(Quest CurQuest) {
-        String Quest="2;Telos;0;3;0;0;";
-        CurQuest.setQuest(Quest);
+        int nextid=CurQuest.getNextIdQuest();
+        String Quest;
+        switch (nextid) {
+            case 2:
+                Quest = "2;2o Quest;1000;3;41.087252;23.551582;";
+                CurQuest.setQuest(Quest);
+                break;
+            case 3:
+                Quest = "3;Telos;0;4;0;0;";
+                CurQuest.setQuest(Quest);
+                break;
+        }
         return CurQuest;
     }
 
