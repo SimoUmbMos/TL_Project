@@ -8,17 +8,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
@@ -26,7 +23,6 @@ import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private GPSTracker gps;
     private Quest CurQuest;
     private double Lat, Long;
     private User CurUser;
@@ -51,12 +47,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView usernamedsp = (TextView) findViewById(R.id.username);
         usernamedsp.setText(CurUser.getUsername());
         usernamedsp.setTextColor(Color.WHITE);
-        gps = new GPSTracker(this);
+        GPSTracker gps = new GPSTracker(this);
         if (gps.canGetLocation()) {
             Lat = gps.getLatitude();
             Long = gps.getLongitude();
-        } else {
-            gps.showSettingsAlert();
         }
         gps.stopUsingGPS();
         mapFragment.getMapAsync(this);
@@ -84,14 +78,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         intent.putExtra("User", CurUser.ToString());
         intent.putExtra("Quest", CurQuest.ToString());
         startActivity(intent);
-
     }
+
     void setquestonmap(double lat,double lng){
         mMap.clear();
         if(CurQController.QuestIsTrue(CurQuest)){
-        mMap.addCircle(new CircleOptions().center(new LatLng(lat,lng)).radius(60).strokeColor(Color.TRANSPARENT).fillColor(0x557f7fff));
+             mMap.addCircle(new CircleOptions().center(new LatLng(lat, lng)).radius(60).strokeColor(Color.TRANSPARENT).fillColor(0x557f7fff));
         }
     }
+
     float distof(double lat1,double lng1,double lat2,double lng2){
         Location loc1,loc2;
         loc1=new Location("");
@@ -105,20 +100,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void ActionClick(View view) {
         if(CurQController.QuestIsTrue(CurQuest)) {
-            if (gps.canGetLocation()) {
-                Lat = gps.getLatitude();
-                Long = gps.getLongitude();
-            } else {
-                gps.showSettingsAlert();
-            }
-            gps.stopUsingGPS();
-            float meter=distof(Lat,Long,CurQuest.getLat(),CurQuest.getLng());
-            if(meter<=60) {
-                CurUser=CurUController.QuestComplete(CurUser,CurQuest);
-                CurQuest = CurQController.NextQuest(CurQuest);
-                setquestonmap(CurQuest.getLat(),CurQuest.getLng());
-            }else{
-                Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT).show();
+            CheckController GpsEnable=new CheckController();
+            if(GpsEnable.GpsEnable(this)) {
+                GPSTracker gps = new GPSTracker(this);
+                if (gps.canGetLocation()) {
+                    Lat = gps.getLatitude();
+                    Long = gps.getLongitude();
+                }
+                gps.stopUsingGPS();
+                float meter = distof(Lat, Long, CurQuest.getLat(), CurQuest.getLng());
+                if (meter <= 60) {
+                    CurUser = CurUController.QuestComplete(CurUser, CurQuest);
+                    CurQuest = CurQController.NextQuest(CurQuest);
+                    setquestonmap(CurQuest.getLat(), CurQuest.getLng());
+                } else {
+                    Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
