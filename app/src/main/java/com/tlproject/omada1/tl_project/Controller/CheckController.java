@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Dialogs;
+package com.tlproject.omada1.tl_project.Controller;
 
 import android.app.Dialog;
 import android.content.Context;

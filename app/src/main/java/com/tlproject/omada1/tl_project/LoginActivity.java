@@ -7,8 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
-import com.tlproject.omada1.tl_project.Dialogs.CheckController;
+
 import com.tlproject.omada1.tl_project.Model.User;
 
 public class LoginActivity extends AppCompatActivity {

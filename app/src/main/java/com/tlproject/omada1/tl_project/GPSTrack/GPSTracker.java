@@ -10,7 +10,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.tlproject.omada1.tl_project.Dialogs.CheckController;
+import com.tlproject.omada1.tl_project.Controller.CheckController;
+
 
 public class GPSTracker extends Service implements LocationListener {
 
