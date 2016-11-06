@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.tlproject.omada1.tl_project.Controller.UserController;
+import com.tlproject.omada1.tl_project.Dialogs.CheckController;
 import com.tlproject.omada1.tl_project.Model.User;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,18 +27,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void LoginClick(View view) {
-        EditText username=(EditText) findViewById(R.id.username);
-        EditText password=(EditText) findViewById(R.id.password);
-        String Username=username.getText().toString();
-        String Password=password.getText().toString();
-        UserController control=new UserController();
-        if(control.Login(Username,Password,getApplicationContext())){
-            User user=new User();
-            //user=control.getUser(Username);
-            Intent intent=new Intent(LoginActivity.this, MapsActivity.class);;
-            intent.putExtra("User", user.ToString());
-            finish();
-            startActivity(intent);
+        CheckController CheckGps=new CheckController();
+        EditText username = (EditText) findViewById(R.id.username);
+        EditText password = (EditText) findViewById(R.id.password);
+        String Username = username.getText().toString();
+        String Password = password.getText().toString();
+        UserController control = new UserController();
+        if (control.Login(Username, Password, getApplicationContext())) {
+            if(CheckGps.GpsEnable(this)){
+                User user = new User();
+                //user=control.getUser(Username);
+                Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                ;
+                intent.putExtra("User", user.ToString());
+                finish();
+                startActivity(intent);
+            }
         }
     }
 

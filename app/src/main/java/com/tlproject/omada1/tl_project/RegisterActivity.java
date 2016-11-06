@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.tlproject.omada1.tl_project.Controller.UserController;
+import com.tlproject.omada1.tl_project.Dialogs.CheckController;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -18,6 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void RegistClick(View view) {
+        CheckController GpsCheck=new CheckController();
         EditText username=(EditText) findViewById(R.id.usernamer);
         EditText password=(EditText) findViewById(R.id.passwordr);
         EditText cpassword=(EditText) findViewById(R.id.cpassword);
@@ -26,11 +28,14 @@ public class RegisterActivity extends AppCompatActivity {
         String cPassword=cpassword.getText().toString();
         UserController control=new UserController();
         if(control.Regist(Username,Password,cPassword,this)) {
-            String usr = Username + ";" + Password + ";1;0;";
-            Intent intent = new Intent(RegisterActivity.this, MapsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("User", usr);
-            startActivity(intent);
+            if(GpsCheck.GpsEnable(this)){
+                String usr = Username + ";" + Password + ";1;0;";
+                Intent intent = new Intent(RegisterActivity.this, MapsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("User", usr);
+                startActivity(intent);
+            }
         }
     }
 }
+
