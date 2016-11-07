@@ -13,8 +13,8 @@ public class Quest {
         idquest = 1;
         exp = 1000;
         nextIdQuest = 2;
-        lat = 41.087630;
-        lng = 23.552333;
+        lat = 41.075152;
+        lng = 23.555608;
     }
     public int getExp() {
         return exp;
