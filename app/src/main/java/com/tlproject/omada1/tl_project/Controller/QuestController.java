@@ -13,7 +13,7 @@ public class QuestController implements QuestInterface {
         String Quest;
         switch (nextid) {
             case 2:
-                Quest = "2;2o Quest;1000;3;41.087252;23.551582;";
+                Quest = "2;2o Quest;1000;3;41.074600;23.555120;";
                 CurQuest.setQuest(Quest);
                 break;
             case 3:
