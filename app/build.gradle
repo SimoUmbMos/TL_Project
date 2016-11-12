@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "com.tlproject.omada1.tl_project"
-        minSdkVersion 14
+        minSdkVersion 18
         targetSdkVersion 25
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
@@ -33,5 +33,5 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:9.8.0'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 }

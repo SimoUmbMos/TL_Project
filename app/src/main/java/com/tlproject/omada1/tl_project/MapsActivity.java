@@ -1,8 +1,12 @@
 package com.tlproject.omada1.tl_project;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,48 +27,60 @@ import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private Quest CurQuest;
+    private int QuestOnMapRadius=60;
     private double Lat, Long;
-    private User CurUser;
     private GoogleMap mMap;
     private UserController CurUController;
     private QuestController CurQController;
+    private User CurUser;
+    private Quest CurQuest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        CurQuest=new Quest();
-        CurQController=new QuestController();
-        CurUController=new UserController();
-        Lat = 0;
-        Long = 0;
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        Bundle extras = getIntent().getExtras();
-        String User = extras.getString("User");
-        CurUser = new User();
-        CurUser.setUser(User);
-        TextView usernamedsp = (TextView) findViewById(R.id.username);
-        usernamedsp.setText(CurUser.getUsername());
-        usernamedsp.setTextColor(Color.WHITE);
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-            Lat = gps.getLatitude();
-            Long = gps.getLongitude();
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ActivityCompat.checkSelfPermission(this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(MapsActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+        } else {
+            init();
         }
-        gps.stopUsingGPS();
-        mapFragment.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        setquestonmap(CurQuest.getLat(),CurQuest.getLng());
+        setquestonmap(CurQuest.getLat(), CurQuest.getLng());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         mMap.setMyLocationEnabled(true);
         LatLng Loc = new LatLng(Lat,Long);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(Loc));
         mMap.animateCamera(zoom);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    init();
+                } else {
+                    Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intent=new Intent(MapsActivity.this,LoginActivity.class);
+                    finish();
+                    startActivity(intent);
+                }
+                break;
+            }
+        }
     }
 
     public void Logout(View view) {
@@ -80,43 +96,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
-    void setquestonmap(double lat,double lng){
-        mMap.clear();
-        if(CurQController.QuestIsTrue(CurQuest)){
-             mMap.addCircle(new CircleOptions().center(new LatLng(lat, lng)).radius(60).strokeColor(Color.TRANSPARENT).fillColor(0x557f7fff));
-        }
-    }
-
-    float distof(double lat1,double lng1,double lat2,double lng2){
-        Location loc1,loc2;
-        loc1=new Location("");
-        loc1.setLatitude(lat1);
-        loc1.setLongitude(lng1);
-        loc2=new Location("");
-        loc2.setLatitude(lat2);
-        loc2.setLongitude(lng2);
-        return loc1.distanceTo(loc2);
-    }
-
     public void ActionClick(View view) {
         if(CurQController.QuestIsTrue(CurQuest)) {
             CheckController GpsEnable=new CheckController();
             if(GpsEnable.GpsEnable(this)) {
-                GPSTracker gps = new GPSTracker(this);
-                if (gps.canGetLocation()) {
-                    Lat = gps.getLatitude();
-                    Long = gps.getLongitude();
-                }
-                gps.stopUsingGPS();
-                float meter = distof(Lat, Long, CurQuest.getLat(), CurQuest.getLng());
-                if (meter <= 60) {
+                float meter = distof(CurQuest.getLat(), CurQuest.getLng());
+                if (meter <= QuestOnMapRadius) {
                     CurUser = CurUController.QuestComplete(CurUser, CurQuest);
                     CurQuest = CurQController.NextQuest(CurQuest);
                     setquestonmap(CurQuest.getLat(), CurQuest.getLng());
                 } else {
-                    Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
+        }
+    }
+
+    public void init(){
+        CurQuest = new Quest();
+        CurQController = new QuestController();
+        CurUController = new UserController();
+        Lat = 0;
+        Long = 0;
+        Bundle extras = getIntent().getExtras();
+        String User = extras.getString("User");
+        CurUser = new User();
+        CurUser.setUser(User);
+        TextView usernamedsp = (TextView) findViewById(R.id.username);
+        usernamedsp.setText(CurUser.getUsername());
+        usernamedsp.setTextColor(Color.WHITE);
+        GPSTracker gps = new GPSTracker(this);
+        if (gps.canGetLocation()) {
+            Lat = gps.getLatitude();
+            Long = gps.getLongitude();
+        }
+        gps.stopUsingGPS();
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    float distof(double lat,double lng){
+        GPSTracker gps = new GPSTracker(this);
+        if (gps.canGetLocation()) {
+                Lat = gps.getLatitude();
+                Long = gps.getLongitude();
+        }
+        gps.stopUsingGPS();
+        Location loc1,loc2;
+        loc1=new Location("");
+        loc1.setLatitude(Lat);
+        loc1.setLongitude(Long);
+        loc2=new Location("");
+        loc2.setLatitude(lat);
+        loc2.setLongitude(lng);
+        return loc1.distanceTo(loc2);
+    }
+
+    void setquestonmap(double lat,double lng){
+        mMap.clear();
+        if(CurQController.QuestIsTrue(CurQuest)){
+            mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(lat, lng))
+                    .radius(QuestOnMapRadius)
+                    .strokeColor(Color.TRANSPARENT)
+                    .fillColor(0x557f7fff));
         }
     }
 }
