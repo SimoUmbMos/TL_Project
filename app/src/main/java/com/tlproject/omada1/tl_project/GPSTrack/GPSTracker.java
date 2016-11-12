@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 
 
