@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.tlproject.omada1.tl_project.ProfileActivity">
+    tools:context="com.tlproject.omada1.tl_project.Activities.ProfileActivity">
 
     <TextView
         android:text="@string/curexp"
@@ -102,14 +102,6 @@
         android:layout_alignBottom="@+id/textView7"
         android:layout_alignLeft="@+id/lvl"
         android:layout_alignStart="@+id/lvl" />
-
-    <TextView
-        android:text="@string/userprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView13"
-        android:layout_above="@+id/textView7"
-        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
