@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project;
+package com.tlproject.omada1.tl_project.Activitys;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
+import com.tlproject.omada1.tl_project.R;
 
 
 public class RegisterActivity extends AppCompatActivity {
