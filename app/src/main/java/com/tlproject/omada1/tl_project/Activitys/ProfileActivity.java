@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project;
+package com.tlproject.omada1.tl_project.Activitys;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
+import com.tlproject.omada1.tl_project.R;
 
 public class ProfileActivity extends AppCompatActivity {
 

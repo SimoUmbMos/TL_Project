@@ -12,15 +12,14 @@ public class UserController implements UserInterface {
         User User=new User();
 
         if(User.exist(Username)){
-            //User= usercontroller.getUser(Username);
             if(User.PasswordEq(Password)){
                 return true;
             }else{
-                Toast.makeText(context, "incorrect Password", Toast.LENGTH_SHORT).show();
+              Toast.makeText(context, "incorrect Password", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }else{
-            Toast.makeText(context, "Username don't exist", Toast.LENGTH_SHORT).show();
+           Toast.makeText(context, "Username don't exist", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

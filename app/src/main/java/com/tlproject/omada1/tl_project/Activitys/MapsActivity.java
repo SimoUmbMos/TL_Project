@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project;
+package com.tlproject.omada1.tl_project.Activitys;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +25,7 @@ import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
+import com.tlproject.omada1.tl_project.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private int QuestOnMapRadius=60;
