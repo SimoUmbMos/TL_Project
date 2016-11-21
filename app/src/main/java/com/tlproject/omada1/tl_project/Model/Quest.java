@@ -39,9 +39,11 @@ public class Quest {
     public String getDesc() {
         return desc;
     }
+
     public String ToString(){
         return (String.valueOf(idquest)+";"+desc+";"+String.valueOf(exp)+";"+String.valueOf(nextIdQuest)+";"+String.valueOf(lat)+";"+String.valueOf(lng)+";");
     }
+
     public void setQuest(String Quests){
         char c;
         String tempS="";

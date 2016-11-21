@@ -8,7 +8,6 @@ import com.tlproject.omada1.tl_project.Model.User;
 
 public class UserController implements UserInterface {
 
-
     @Override
     public int expforLvl(User curruser) {
         int lvl=curruser.getLvl();
