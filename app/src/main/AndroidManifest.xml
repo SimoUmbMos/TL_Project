@@ -22,23 +22,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activitys.MapsActivity"
+            android:name=".Activities.MapsActivity"
             android:label="@string/title_activity_maps">
         </activity>
         <activity
-            android:name=".Activitys.LoginActivity"
-            android:label="@string/title_activity_login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Activitys.RegisterActivity"
-            android:label="@string/title_activity_regist">
-        </activity>
-        <activity
-            android:name=".Activitys.ProfileActivity"
+            android:name=".Activities.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>
     </application>

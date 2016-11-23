@@ -1,104 +1,57 @@
 package com.tlproject.omada1.tl_project.Model;
 
 public class User {
-    /**
-     * String with the users password
-     */
-    private String password;
-    /**
-     * String with the users username
-     */
-    private String username;
-    /**
-     * Int with the users Level
-     */
+
+    private String name;
+    private int queston;
     private int lvl;
-    /**
-     * Int with the users experience point
-     */
     private int exp;
-    /**
-     *
-     */
-    public User(){
-        username="test123";
-        password="test123";
-        lvl=2;
-        exp=1000;
+
+    public User() {
     }
-    /**
-     * Return the users username
-     */
-    public String getUsername(){
-        return username;
+
+    public User(String Name) {
+        this.name = Name;
+        this.queston = 1;
+        this.lvl = 1;
+        this.exp = 500;
     }
-    /**
-     * Return the users Level
-     */
-    public int getLvl(){return lvl;}
-    /**
-     * Return the users experience point
-     */
-    public int getExp(){return exp;}
-    /**
-     * Set user Level
-     */
-    public void setLvl(int lvl1){lvl=lvl1;}
-    /**
-     * Set user experience point
-     */
-    public void setExp(int exp1){exp=exp1;}
-    /**
-     * Set user data from a string with a format like User.toString();
-     */
-    public void setUser(String userS){
-        char c;
-        String tempS="";
-        int i=0;
-        while ((c=userS.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        username=tempS;
-        tempS="";
-        i++;
-        while ((c=userS.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        password=tempS;
-        tempS="";
-        i++;
-        while ((c=userS.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        lvl=Integer.parseInt(tempS);
-        tempS="";
-        i++;
-        while ((c=userS.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        exp=Integer.parseInt(tempS);
+    public void setUser( String Name,int Queston,int Lvl,int Exp){
+        this.name=Name;
+        this.queston=Queston;
+        this.lvl=Lvl;
+        this.exp=Exp;
     }
-    /**
-     * Compare the given username with the user username
-     */
-    public boolean exist(String Username) {
-        return username.equals(Username);
+
+    public String getName() {
+        return name;
     }
-    /**
-     *  Compare the given password with the user password
-     */
-    public boolean PasswordEq(String Password) {
-        return password.equals(Password);
+
+    public void setName(String name) {
+        this.name = name;
     }
-    /**
-     * Return User data as String
-     */
-    public String ToString(){
-        return (username+";"+password+";"+String.valueOf(lvl)+";"+String.valueOf(exp)+";");
+
+    public int getQueston() {
+        return queston;
     }
-    
+
+    public void setQueston(int queston) {
+        this.queston = queston;
+    }
+
+    public int getLvl() {
+        return lvl;
+    }
+
+    public void setLvl(int lvl) {
+        this.lvl = lvl;
+    }
+
+    public int getExp() {
+        return exp;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
 }

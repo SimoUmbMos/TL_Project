@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Activitys;
+package com.tlproject.omada1.tl_project.Activities;
 
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
@@ -18,12 +21,15 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Bundle extras = getIntent().getExtras();
-        String User = extras.getString("User");
-        String Quest = extras.getString("Quest");
-        Quest CurQuest=new Quest();
-        CurQuest.setQuest(Quest);
+        String Name = extras.getString("NAME");
+        int Exp=extras.getInt("EXP");
+        int Lvl=extras.getInt("LVL");
+        int Queston=extras.getInt("QUESTON");
+        //String Quest = extras.getString("Quest");
+        //Quest CurQuest=new Quest();
+        //CurQuest.setQuest(Quest);
         com.tlproject.omada1.tl_project.Model.User curruser = new User();
-        curruser.setUser(User);
+        curruser.setUser(Name,Queston,Lvl,Exp);
 
         TextView username=(TextView) findViewById(R.id.username);
         TextView lvl=(TextView) findViewById(R.id.lvl);
@@ -32,10 +38,11 @@ public class ProfileActivity extends AppCompatActivity {
         TextView questdesc=(TextView) findViewById(R.id.questdesc);
         ProgressBar exp=(ProgressBar) findViewById(R.id.expbar);
 
-        username.setText(curruser.getUsername());
-        lvl.setText(String.valueOf(curruser.getLvl()));
+        username.setText(Name);
+        lvl.setText(String.valueOf(Lvl));
+
         UserController control=new UserController();
-        questdesc.setText(CurQuest.getDesc());
+       // questdesc.setText(CurQuest.getDesc());
         int expcur=curruser.getExp();
         int nextexp=control.expforLvl(curruser);
         curexp.setText(String.valueOf(expcur));
