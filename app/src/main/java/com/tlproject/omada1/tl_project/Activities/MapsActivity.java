@@ -2,6 +2,7 @@ package com.tlproject.omada1.tl_project.Activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +17,8 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,29 +29,38 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
+import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private int QuestOnMapRadius = 60;
-    private double Lat, Long;
-    private GoogleMap mMap;
-    /*
+
     private UserController CurUController;
     private QuestController CurQController;
     private User CurUser;
     private Quest CurQuest;
-     */
-
+    //Map
+    private int QuestOnMapRadius = 60;
+    private GoogleMap mMap;
+    private double Lat=0, Lng=0;
     //Firebase instance variables
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mUsersDatabaseReference;
+    private DatabaseReference mQuestDatabaseReference;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     public static final int RC_SIGN_IN = 1;
-    public String Name;
-    public int Lvl,Exp,Queston;
+    //User
+        public String Name, uid;
+        public int Lvl, uExp,Queston;
+    //Quest
+        public String Desc;
+        public int qExp;
+        private double qLat=0, qLng=0;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +71,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFirebaseDatabase=FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mUsersDatabaseReference=mFirebaseDatabase.getReference().child("Users");
+        mQuestDatabaseReference = mFirebaseDatabase.getReference().child("Quests");
 
-
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ActivityCompat.checkSelfPermission(this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapsActivity.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    1);
-        } else {
-            //TODO: init();
-        }
         //Bottom of onCreate for Firebase
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -80,13 +82,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (fuser != null) {
                     // User is signed in
                     User user = new User(fuser.getDisplayName());
-                    mUsersDatabaseReference.child(fuser.getUid()).setValue(user);
-                    mUserr(mUsersDatabaseReference.child(fuser.getUid()));
-                    System.out.println("Testy: "+Exp);
+                    uid =fuser.getUid();
+                    mUsersDatabaseReference.child(uid).setValue(user);
+                    fsetUser(mUsersDatabaseReference.child(uid));
                     TextView usernamedsp = (TextView) findViewById(R.id.username);
                     usernamedsp.setText(fuser.getDisplayName());
-                    //System.out.println("Testy: "+fuser.getUid());
-                    //Toast.makeText(getBaseContext(), "Signed in", Toast.LENGTH_SHORT).show();
+                    usernamedsp.setTextColor(Color.WHITE);
+                    init();
                 } else {
                     // User is signed out
                     startActivityForResult(
@@ -99,9 +101,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     .build(),
                             RC_SIGN_IN);
                 }
-                //TODO: updateui
             }
         };
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ActivityCompat.checkSelfPermission(this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapsActivity.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        AuthUI.getInstance().signOut(this);
     }
 
     @Override
@@ -120,20 +149,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mAuthStateListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-        }
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //TODO: setQuest
@@ -148,20 +163,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     1);
         }
         mMap.setMyLocationEnabled(true);
-        LatLng Loc = new LatLng(Lat,Long);
+        LatLng Loc = new LatLng(Lat, Lng);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(Loc));
         mMap.animateCamera(zoom);
     }
 
-    public void mUserr(DatabaseReference ref){
+    public void init(){
+        fsetQuest(mQuestDatabaseReference.child("Quest1"));
+        fsetUser(mUsersDatabaseReference.child(uid));
+        CurQController = new QuestController();
+        CurUController = new UserController();
+        CurQuest = new Quest(Desc,qExp,qLat,qLng);
+        CurUser = new User(Name,Queston,Lvl,uExp);
+
+        GPSTracker gps = new GPSTracker(this);
+        if (gps.canGetLocation()) {
+            Lat = gps.getLatitude();
+            Lng = gps.getLongitude();
+        }
+        gps.stopUsingGPS();
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        System.out.println("testy: "+qLat);
+            if(qLat!=0) setquestonmap(qLat,qLng);
+    }
+
+    public void fsetUser(DatabaseReference ref){
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 Name=user.getName();
-                Exp=user.getExp();
+                uExp =user.getExp();
                 Lvl=user.getLvl();
                 Queston=user.getQueston();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void fsetQuest(DatabaseReference ref){
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Quest quest = dataSnapshot.getValue(Quest.class);
+                Desc=quest.getDesc();
+                qExp=quest.getExp();
+                qLat=quest.getLat();
+                qLng =quest.getLng();
             }
 
             @Override
@@ -174,19 +228,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void ProfileClick(View view) {
         Intent intent=new Intent(MapsActivity.this,ProfileActivity.class);
         intent.putExtra("NAME",Name);
-        intent.putExtra("EXP",Exp);
+        intent.putExtra("EXP", uExp);
         intent.putExtra("LVL",Lvl);
         intent.putExtra("QUESTON",Queston);
-        //intent.putExtra("Quest", CurQuest.ToString());
+        //TODO: intent.putExtra("Quest", CurQuest.ToString());
         startActivity(intent);
 
-    }
+    }    //TODO: Bug with loading user's data
 
     public void Logout(View view) {
         AuthUI.getInstance().signOut(this);
     }
 
-    /*@Override
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
@@ -198,17 +253,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else {
                     Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
                             Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(MapsActivity.this,LoginActivity.class);
                     finish();
-                    startActivity(intent);
                 }
                 break;
             }
         }
     }
 
-
-
+    void setquestonmap(double lat,double lng){
+        mMap.clear();
+        if(CurQController.QuestIsTrue(CurQuest)){
+            mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(lat, lng))
+                    .radius(QuestOnMapRadius)
+                    .strokeColor(Color.TRANSPARENT)
+                    .fillColor(0x557f7fff));
+        }
+    }
+/*
 
 
     public void ActionClick(View view) {
@@ -228,54 +290,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void init(){
-        CurQuest = new Quest();
-        CurQController = new QuestController();
-        CurUController = new UserController();
-        Lat = 0;
-        Long = 0;
-        Bundle extras = getIntent().getExtras();
-        String User = extras.getString("User");
-        CurUser = new User();
-        CurUser.setUser(User);
 
-        usernamedsp.setTextColor(Color.WHITE);
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-            Lat = gps.getLatitude();
-            Long = gps.getLongitude();
-        }
-        gps.stopUsingGPS();
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
 
     float distof(double lat,double lng){
         GPSTracker gps = new GPSTracker(this);
         if (gps.canGetLocation()) {
                 Lat = gps.getLatitude();
-                Long = gps.getLongitude();
+                Lng = gps.getLongitude();
         }
         gps.stopUsingGPS();
         Location loc1,loc2;
         loc1=new Location("");
         loc1.setLatitude(Lat);
-        loc1.setLongitude(Long);
+        loc1.setLongitude(Lng);
         loc2=new Location("");
         loc2.setLatitude(lat);
         loc2.setLongitude(lng);
         return loc1.distanceTo(loc2);
     }
 
-    void setquestonmap(double lat,double lng){
-        mMap.clear();
-        if(CurQController.QuestIsTrue(CurQuest)){
-            mMap.addCircle(new CircleOptions()
-                    .center(new LatLng(lat, lng))
-                    .radius(QuestOnMapRadius)
-                    .strokeColor(Color.TRANSPARENT)
-                    .fillColor(0x557f7fff));
-        }
-    }*/
+    */
 }

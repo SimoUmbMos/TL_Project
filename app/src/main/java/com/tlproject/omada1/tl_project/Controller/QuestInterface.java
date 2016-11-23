@@ -7,7 +7,6 @@ import com.tlproject.omada1.tl_project.Model.Quest;
  */
 
 public interface QuestInterface {
-    public Quest NextQuest(Quest CurQuest);
-    public boolean QuestIsTrue(Quest CurQuest);
-
+   // public Quest NextQuest(Quest CurQuest);
+   boolean QuestIsTrue(Quest CurQuest);
 }

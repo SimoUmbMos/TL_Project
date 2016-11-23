@@ -7,10 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.Controller.UserController;
-import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 
@@ -29,7 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
         //Quest CurQuest=new Quest();
         //CurQuest.setQuest(Quest);
         com.tlproject.omada1.tl_project.Model.User curruser = new User();
-        curruser.setUser(Name,Queston,Lvl,Exp);
+        curruser=new User(Name,Queston,Lvl,Exp);
 
         TextView username=(TextView) findViewById(R.id.username);
         TextView lvl=(TextView) findViewById(R.id.lvl);

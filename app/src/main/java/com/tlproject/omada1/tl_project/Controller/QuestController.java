@@ -7,7 +7,7 @@ import com.tlproject.omada1.tl_project.Model.Quest;
  */
 
 public class QuestController implements QuestInterface {
-    @Override
+   /* @Override
     public Quest NextQuest(Quest CurQuest) {
         int nextid=CurQuest.getNextIdQuest();
         String Quest;
@@ -22,7 +22,7 @@ public class QuestController implements QuestInterface {
                 break;
         }
         return CurQuest;
-    }
+    }*/
 
     @Override
     public boolean QuestIsTrue(Quest CurQuest) {

@@ -6,22 +6,21 @@ package com.tlproject.omada1.tl_project.Model;
 
 public class Quest {
     private String desc;
-    private int idquest,exp,nextIdQuest;
+    private int exp;
     private double lat,lng;
+
     public Quest() {
-        desc = "1o quest gia test";
-        idquest = 1;
-        exp = 1000;
-        nextIdQuest = 2;
-        lat = 41.075152;
-        lng = 23.555608;
-    }
-    public int getExp() {
-        return exp;
     }
 
-    public int getIdquest() {
-        return idquest;
+    public Quest(String ddesc,int eexp,double llat,double llng){
+        this.desc=ddesc;
+        this.exp=eexp;
+        this.lat=llat;
+        this.lng=llng;
+    }
+
+    public int getExp() {
+        return exp;
     }
 
     public double getLat() {
@@ -32,59 +31,23 @@ public class Quest {
         return lng;
     }
 
-    public int getNextIdQuest() {
-        return nextIdQuest;
-    }
-
     public String getDesc() {
         return desc;
     }
-    public String ToString(){
-        return (String.valueOf(idquest)+";"+desc+";"+String.valueOf(exp)+";"+String.valueOf(nextIdQuest)+";"+String.valueOf(lat)+";"+String.valueOf(lng)+";");
+
+    public void setExp(int exp) {
+        this.exp = exp;
     }
-    public void setQuest(String Quests){
-        char c;
-        String tempS="";
-        int i=0;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        idquest=Integer.parseInt(tempS);
-        tempS="";
-        i++;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        desc=tempS;
-        tempS="";
-        i++;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        exp=Integer.parseInt(tempS);
-        tempS="";
-        i++;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        nextIdQuest=Integer.parseInt(tempS);
-        tempS="";
-        i++;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        lat= Double.parseDouble(tempS);
-        tempS="";
-        i++;
-        while ((c=Quests.charAt(i)) != ';'){
-            tempS=tempS+c;
-            i++;
-        }
-        lng=Double.parseDouble(tempS);
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

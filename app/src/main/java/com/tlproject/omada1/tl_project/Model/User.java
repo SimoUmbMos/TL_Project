@@ -16,7 +16,8 @@ public class User {
         this.lvl = 1;
         this.exp = 500;
     }
-    public void setUser( String Name,int Queston,int Lvl,int Exp){
+
+    public User(String Name, int Queston, int Lvl, int Exp){
         this.name=Name;
         this.queston=Queston;
         this.lvl=Lvl;
