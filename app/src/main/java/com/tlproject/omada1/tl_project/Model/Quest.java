@@ -34,7 +34,7 @@ public class Quest {
     public String getDesc() {
         return desc;
     }
-
+    
     public void setExp(int exp) {
         this.exp = exp;
     }
@@ -49,5 +49,6 @@ public class Quest {
 
     public void setDesc(String desc) {
         this.desc = desc;
+
     }
 }

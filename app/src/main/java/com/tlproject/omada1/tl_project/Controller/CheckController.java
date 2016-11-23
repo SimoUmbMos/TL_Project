@@ -17,12 +17,10 @@ public class CheckController implements CheckInterface {
         boolean network_enabled = false;
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-        try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {        }
         if(!gps_enabled && !network_enabled) {
-            final Dialog dialog = new Dialog(Caller);
+           final Dialog dialog = new Dialog(Caller);
             dialog.setContentView(R.layout.custom_dialog);
             dialog.setTitle("Gps Not Enable");
             Button ButtonYes = (Button) dialog.findViewById(R.id.btn_yes);
