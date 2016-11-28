@@ -1,15 +1,17 @@
 package com.tlproject.omada1.tl_project.Controller;
 
 import com.tlproject.omada1.tl_project.Model.Quest;
+import com.tlproject.omada1.tl_project.Model.User;
 
 /**
  * Created by Chris on 4/11/2016.
  */
 
 public class QuestController implements QuestInterface {
-   /* @Override
-    public Quest NextQuest(Quest CurQuest) {
-        int nextid=CurQuest.getNextIdQuest();
+    /*@Override
+    public Quest NextQuest(User CurUser, Quest CurQuest) {
+        int nextid=(CurUser.getQueston())+1;
+
         String Quest;
         switch (nextid) {
             case 2:

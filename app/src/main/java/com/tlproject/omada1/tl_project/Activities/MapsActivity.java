@@ -3,6 +3,7 @@ package com.tlproject.omada1.tl_project.Activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
@@ -85,10 +87,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     uid =fuser.getUid();
                     mUsersDatabaseReference.child(uid).setValue(user);
                     fsetUser(mUsersDatabaseReference.child(uid));
+                    fsetQuest(mQuestDatabaseReference.child("Quest3"));
                     TextView usernamedsp = (TextView) findViewById(R.id.username);
                     usernamedsp.setText(fuser.getDisplayName());
                     usernamedsp.setTextColor(Color.WHITE);
-                    init();
+
+                    if(CurUser!=null)init();
                 } else {
                     // User is signed out
                     startActivityForResult(
@@ -151,8 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //TODO: setQuest
-        //setquestonmap(CurQuest.getLat(), CurQuest.getLng());
+       // setquestonmap(CurQuest.getLat(), CurQuest.getLng());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         if (Build.VERSION.SDK_INT >= 23 &&
                 ActivityCompat.checkSelfPermission(this,
@@ -169,12 +172,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void init(){
-        fsetQuest(mQuestDatabaseReference.child("Quest1"));
-        fsetUser(mUsersDatabaseReference.child(uid));
+        //String cQuest="Quest"+String.valueOf(CurUser.getQueston());
+        //fsetQuest(mQuestDatabaseReference.child(cQuest));
         CurQController = new QuestController();
         CurUController = new UserController();
-        CurQuest = new Quest(Desc,qExp,qLat,qLng);
-        CurUser = new User(Name,Queston,Lvl,uExp);
 
         GPSTracker gps = new GPSTracker(this);
         if (gps.canGetLocation()) {
@@ -185,19 +186,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        System.out.println("testy: "+qLat);
-            if(qLat!=0) setquestonmap(qLat,qLng);
+        setquestonmap(CurQuest.getLat(),CurQuest.getLng());
     }
 
     public void fsetUser(DatabaseReference ref){
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                Name=user.getName();
-                uExp =user.getExp();
-                Lvl=user.getLvl();
-                Queston=user.getQueston();
+                CurUser=user;
             }
 
             @Override
@@ -208,14 +205,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void fsetQuest(DatabaseReference ref){
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Quest quest = dataSnapshot.getValue(Quest.class);
-                Desc=quest.getDesc();
-                qExp=quest.getExp();
-                qLat=quest.getLat();
-                qLng =quest.getLng();
+                CurQuest=quest;
             }
 
             @Override
@@ -227,41 +221,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void ProfileClick(View view) {
         Intent intent=new Intent(MapsActivity.this,ProfileActivity.class);
-        intent.putExtra("NAME",Name);
-        intent.putExtra("EXP", uExp);
-        intent.putExtra("LVL",Lvl);
-        intent.putExtra("QUESTON",Queston);
-        //TODO: intent.putExtra("Quest", CurQuest.ToString());
+        intent.putExtra("NAME",CurUser.getName());
+        intent.putExtra("EXP", CurUser.getExp());
+        intent.putExtra("LVL",CurUser.getLvl());
+        intent.putExtra("QUESTON",CurUser.getQueston());
+        intent.putExtra("QUESTD",CurQuest.getDesc());
         startActivity(intent);
 
-    }    //TODO: Bug with loading user's data
+    }    //TODO: Bug with saving user's data
 
     public void Logout(View view) {
         AuthUI.getInstance().signOut(this);
     }
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    init();
-                } else {
-                    Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
-                            Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
-            }
-        }
-    }
-
-    void setquestonmap(double lat,double lng){
-        mMap.clear();
+    public void setquestonmap(double lat,double lng){
+        if(mMap!=null){ mMap.clear();
         if(CurQController.QuestIsTrue(CurQuest)){
             mMap.addCircle(new CircleOptions()
                     .center(new LatLng(lat, lng))
@@ -269,9 +243,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .strokeColor(Color.TRANSPARENT)
                     .fillColor(0x557f7fff));
         }
-    }
-/*
-
+    }}
 
     public void ActionClick(View view) {
         if(CurQController.QuestIsTrue(CurQuest)) {
@@ -280,8 +252,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 float meter = distof(CurQuest.getLat(), CurQuest.getLng());
                 if (meter <= QuestOnMapRadius) {
                     CurUser = CurUController.QuestComplete(CurUser, CurQuest);
-                    CurQuest = CurQController.NextQuest(CurQuest);
+
+                    fsetQuest(mQuestDatabaseReference.child("Quest2"));
                     setquestonmap(CurQuest.getLat(), CurQuest.getLng());
+                    //CurQuest = CurQController.NextQuest(CurUser,CurQuest);//TODO: next quest
+                    //setquestonmap(CurQuest.getLat(), CurQuest.getLng());
                 } else {
                     Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
                             .show();
@@ -290,9 +265,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
-    float distof(double lat,double lng){
+    public float distof(double lat,double lng){
         GPSTracker gps = new GPSTracker(this);
         if (gps.canGetLocation()) {
                 Lat = gps.getLatitude();
@@ -309,5 +282,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return loc1.distanceTo(loc2);
     }
 
-    */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //init(CurUser,CurQuest);
+                } else {
+                    Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            }
+        }
+    }
+
 }
