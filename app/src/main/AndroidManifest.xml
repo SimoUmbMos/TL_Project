@@ -26,16 +26,12 @@
             android:label="@string/title_activity_maps">
         </activity>
         <activity
-            android:name=".Activitys.LoginActivity"
+            android:name=".Activitys.MainActivity"
             android:label="@string/title_activity_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".Activitys.RegisterActivity"
-            android:label="@string/title_activity_regist">
         </activity>
         <activity
             android:name=".Activitys.ProfileActivity"

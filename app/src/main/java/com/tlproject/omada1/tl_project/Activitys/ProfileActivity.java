@@ -25,7 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
         com.tlproject.omada1.tl_project.Model.User curruser = new User();
         curruser.setUser(User);
 
-        TextView username=(TextView) findViewById(R.id.username);
+        TextView username=(TextView) findViewById(R.id.usernameprofile);
         TextView lvl=(TextView) findViewById(R.id.lvl);
         TextView curexp=(TextView) findViewById(R.id.curexp);
         TextView nextlvlexp=(TextView) findViewById(R.id.nextlvlexp);

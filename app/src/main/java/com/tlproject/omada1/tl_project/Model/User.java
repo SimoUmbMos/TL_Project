@@ -4,7 +4,7 @@ public class User {
     /**
      * String with the users password
      */
-    private String password;
+    private String userid;
     /**
      * String with the users username
      */
@@ -20,11 +20,12 @@ public class User {
     /**
      *
      */
+    private String queston;
     public User(){
-        username="test123";
-        password="test123";
-        lvl=2;
-        exp=1000;
+        username=" ";
+        userid=" ";
+        lvl=0;
+        exp=0;
     }
     /**
      * Return the users username
@@ -66,7 +67,14 @@ public class User {
             tempS=tempS+c;
             i++;
         }
-        password=tempS;
+        userid=tempS;
+        tempS="";
+        i++;
+        while ((c=userS.charAt(i)) != ';'){
+            tempS=tempS+c;
+            i++;
+        }
+        queston=tempS;
         tempS="";
         i++;
         while ((c=userS.charAt(i)) != ';'){
@@ -85,20 +93,8 @@ public class User {
     /**
      * Compare the given username with the user username
      */
-    public boolean exist(String Username) {
-        return username.equals(Username);
-    }
-    /**
-     *  Compare the given password with the user password
-     */
-    public boolean PasswordEq(String Password) {
-        return password.equals(Password);
-    }
-    /**
-     * Return User data as String
-     */
     public String ToString(){
-        return (username+";"+password+";"+String.valueOf(lvl)+";"+String.valueOf(exp)+";");
+        return (username+";"+userid+";"+queston+";"+String.valueOf(lvl)+";"+String.valueOf(exp)+";");
     }
     
 }

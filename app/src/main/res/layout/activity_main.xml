@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.tlproject.omada1.tl_project.Activitys.MainActivity"
+    android:background="@color/common_google_signin_btn_text_dark_focused">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/loginpic"
+        android:id="@+id/imageView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/UsernameDsp"
+        android:visibility="invisible"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Useruid"
+        android:layout_below="@+id/UsernameDsp"
+        android:visibility="invisible"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Userlvl"
+        android:layout_below="@+id/Useruid"
+        android:visibility="invisible"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Userexp"
+        android:visibility="invisible"
+        android:layout_below="@+id/Userlvl"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Userqueston"
+        android:visibility="invisible"
+        android:layout_below="@+id/Userexp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+    <Button
+        android:text="LogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/LogOut"
+        android:visibility="invisible"
+        android:layout_below="@+id/Userqueston"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/EmailAction"
+        android:visibility="invisible">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/etEmail"
+            android:textColor="?attr/colorAccent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@+id/tvUsername" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/etPassword"
+            android:layout_below="@+id/etEmail"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/tvEmail"
+            android:textColor="?android:attr/colorAccent" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/etUsername"
+            android:layout_below="@+id/etPassword"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/tvPassword"
+            android:textColor="?android:attr/textColorLinkInverse" />
+
+        <TextView
+            android:text="Email:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvEmail"
+            android:layout_alignBottom="@+id/etEmail"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorAccent"
+            android:layout_toStartOf="@+id/etEmail"
+            android:textAlignment="viewEnd"
+            android:layout_alignTop="@+id/etEmail" />
+
+        <TextView
+            android:text="Password:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:id="@+id/tvPassword"
+            android:layout_above="@+id/etUsername"
+            android:layout_below="@+id/etEmail"
+            android:textColor="@color/colorAccent"
+            android:layout_toStartOf="@+id/etEmail"
+            android:textAlignment="textEnd" />
+
+        <TextView
+            android:text="Username:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:id="@+id/tvUsername"
+            android:layout_below="@+id/etPassword"
+            android:layout_alignBottom="@+id/etUsername"
+            android:textColor="@color/colorAccent"
+            android:textAlignment="viewEnd" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btProceed"
+            android:layout_below="@+id/etUsername"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            />
+
+        <Button
+            android:text="Back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/BackToMenu"
+            android:layout_below="@+id/btProceed"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/SignInMenu"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:text="@string/sign_in_with_google"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SignInGoogle"
+            android:background="@drawable/common_google_signin_btn_text_light"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:textStyle="normal|bold" />
+
+        <Button
+            android:text="@string/sign_in_with_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SignInEmail"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:textStyle="normal|bold"
+            android:background="@android:drawable/btn_default_small" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/RegistEmail"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:textStyle="normal|bold"
+            android:text="@string/regist_with_email"
+            android:background="@android:drawable/btn_default" />
+
+    </LinearLayout>
+</RelativeLayout>

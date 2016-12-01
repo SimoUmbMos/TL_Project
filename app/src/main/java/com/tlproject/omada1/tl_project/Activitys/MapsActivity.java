@@ -12,6 +12,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
@@ -27,8 +35,9 @@ import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
     private int QuestOnMapRadius=60;
+    private GoogleApiClient mGoogleApiClient;
     private double Lat, Long;
     private GoogleMap mMap;
     private UserController CurUController;
@@ -75,7 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 } else {
                     Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
                             Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(MapsActivity.this,LoginActivity.class);
+                    logout();
+                    Intent intent=new Intent(MapsActivity.this,MainActivity.class);
                     finish();
                     startActivity(intent);
                 }
@@ -85,7 +95,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void Logout(View view) {
-        Intent intent=new Intent(MapsActivity.this,LoginActivity.class);
+        logout();
+        Intent intent=new Intent(MapsActivity.this,MainActivity.class);
         finish();
         startActivity(intent);
     }
@@ -115,24 +126,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void init(){
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */,this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        Bundle extras = getIntent().getExtras();
+        String User = extras.getString("User");
+        CurUser=new User();
+        CurUser.setUser(User);
+        String Quest = extras.getString("Quest");
         CurQuest = new Quest();
+        CurQuest.setQuest(Quest);
         CurQController = new QuestController();
         CurUController = new UserController();
         Lat = 0;
         Long = 0;
-        Bundle extras = getIntent().getExtras();
-        String User = extras.getString("User");
-        CurUser = new User();
-        CurUser.setUser(User);
-        TextView usernamedsp = (TextView) findViewById(R.id.username);
-        usernamedsp.setText(CurUser.getUsername());
-        usernamedsp.setTextColor(Color.WHITE);
         GPSTracker gps = new GPSTracker(this);
         if (gps.canGetLocation()) {
             Lat = gps.getLatitude();
             Long = gps.getLongitude();
         }
         gps.stopUsingGPS();
+        TextView usernamedsp = (TextView) findViewById(R.id.usernamedisp);
+        usernamedsp.setText(CurUser.getUsername());
+        usernamedsp.setTextColor(Color.WHITE);
+        //CurQuest.setLat(Lat);
+        //CurQuest.setLng(Long);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -165,4 +189,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .fillColor(0x557f7fff));
         }
     }
+
+    void logout(){
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status status) {
+
+                    }
+                });
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 }

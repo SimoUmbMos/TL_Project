@@ -1,20 +1,17 @@
 package com.tlproject.omada1.tl_project.Model;
 
-/**
- * Created by Chris on 4/11/2016.
- */
 
 public class Quest {
     private String desc;
     private int idquest,exp,nextIdQuest;
     private double lat,lng;
     public Quest() {
-        desc = "1o quest gia test";
+        desc = "1o quest:Tutorial";
         idquest = 1;
         exp = 1000;
         nextIdQuest = 2;
-        lat = 41.075152;
-        lng = 23.555608;
+        lat = 0;
+        lng = 0;
     }
     public int getExp() {
         return exp;
@@ -88,5 +85,12 @@ public class Quest {
             i++;
         }
         lng=Double.parseDouble(tempS);
+    }
+    public void setLat(double Lat) {
+        lat=Lat;
+    }
+
+    public void setLng(double Lng) {
+        lng=Lng;
     }
 }
