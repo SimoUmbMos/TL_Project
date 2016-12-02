@@ -11,5 +11,5 @@ import com.tlproject.omada1.tl_project.Model.User;
 
 public interface UserInterface {
     public int expforLvl(User curruser);
-    public User QuestComplete(User CurUser,Quest CurQuest);
+    public void QuestComplete(User CurUser,Quest CurQuest);
 }

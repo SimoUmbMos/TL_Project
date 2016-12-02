@@ -1,5 +1,10 @@
 package com.tlproject.omada1.tl_project.Controller;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tlproject.omada1.tl_project.Model.Quest;
 
 /**
@@ -8,20 +13,26 @@ import com.tlproject.omada1.tl_project.Model.Quest;
 
 public class QuestController implements QuestInterface {
     @Override
-    public Quest NextQuest(Quest CurQuest) {
-        int nextid=CurQuest.getNextIdQuest();
-        String Quest;
-        switch (nextid) {
-            case 2:
-                Quest = "2;2o Quest;1000;3;41.074600;23.555120;";
-                CurQuest.setQuest(Quest);
-                break;
-            case 3:
-                Quest = "3;Telos;0;4;0;0;";
-                CurQuest.setQuest(Quest);
-                break;
-        }
-        return CurQuest;
+    public void NextQuest(final Quest CurQuest) {
+        DatabaseReference dbref= FirebaseDatabase.getInstance().getReference().child("Quest");
+        String nextquest = String.valueOf(CurQuest.getNextIdQuest());
+        dbref.child("Quest"+nextquest).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String descQuest=dataSnapshot.child("desc").getValue(String.class);
+                String expQuest=dataSnapshot.child("exp").getValue(String.class);
+                String latQuest=dataSnapshot.child("lat").getValue(String.class);
+                String lngQuest=dataSnapshot.child("long").getValue(String.class);
+                String nextquestidQuest=dataSnapshot.child("nextquestid").getValue(String.class);
+                String questidQuest=dataSnapshot.child("questid").getValue(String.class);
+                CurQuest.setQuest(questidQuest+";"+descQuest+";"+expQuest+";"+nextquestidQuest+";"+latQuest+";"+lngQuest+";");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

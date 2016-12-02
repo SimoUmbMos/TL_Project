@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
+import com.tlproject.omada1.tl_project.Controller.lisener;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
@@ -114,9 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if(GpsEnable.GpsEnable(this)) {
                 float meter = distof(CurQuest.getLat(), CurQuest.getLng());
                 if (meter <= QuestOnMapRadius) {
-                    CurUser = CurUController.QuestComplete(CurUser, CurQuest);
-                    CurQuest = CurQController.NextQuest(CurQuest);
-                    setquestonmap(CurQuest.getLat(), CurQuest.getLng());
+                    CurUController.QuestComplete(CurUser, CurQuest);
+                    CurQController.NextQuest(CurQuest);
                 } else {
                     Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
                             .show();
@@ -128,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void init(){
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.client_ID2))
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -155,11 +155,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView usernamedsp = (TextView) findViewById(R.id.usernamedisp);
         usernamedsp.setText(CurUser.getUsername());
         usernamedsp.setTextColor(Color.WHITE);
-        //CurQuest.setLat(Lat);
-        //CurQuest.setLng(Long);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        findViewById(R.id.btaction).setClickable(true);
     }
 
     float distof(double lat,double lng){

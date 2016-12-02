@@ -1,13 +1,11 @@
 package com.tlproject.omada1.tl_project.Activitys;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -153,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.client_ID2))
                 .requestEmail()
                 .build();
         // Build a GoogleApiClient with access to the Google Sign-In API and the
@@ -172,10 +170,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String lvl = dataSnapshot.child("lvl").getValue().toString();
-                                    String exp =dataSnapshot.child("exp").getValue().toString();
-                                    String queston =dataSnapshot.child("queston").getValue().toString();
-                                    login(user.getDisplayName(),user.getUid(),queston,lvl,exp);
+                                    String lvl = dataSnapshot.child("lvl").getValue(String.class);
+                                    String exp =dataSnapshot.child("exp").getValue(String.class);
+                                    String queston =dataSnapshot.child("queston").getValue(String.class);
+                                    if(lvl!=null && exp!=null && queston!=null){
+                                        login(user.getDisplayName(),user.getUid(),queston,lvl,exp);
+                                    }else{
+                                        FirebaseAuth.getInstance().signOut();
+                                    }
                                 }
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {}
@@ -240,7 +242,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         String Uid = user.getUid();
-                                        login(user.getDisplayName(),Uid,dataSnapshot.child("queston").getValue().toString(),dataSnapshot.child("lvl").getValue().toString(), dataSnapshot.child("exp").getValue().toString());
+                                        String queston = dataSnapshot.child("queston").getValue(String.class);
+                                        String lvl=dataSnapshot.child("lvl").getValue(String.class);
+                                        String exp=dataSnapshot.child("exp").getValue(String.class);
+                                            login(user.getDisplayName(), Uid,queston,lvl,exp);
+
                                     }
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {}
@@ -276,10 +282,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(UserName).build();
                                 user.updateProfile(profileUpdates);
-                                UserRef.child(UserName+";"+user.getUid()+";").child("lvl").setValue("1");
+                                UserRef.child(UserName + ";" + user.getUid() + ";").child("lvl").setValue("1");
                                 UserRef.child(UserName+";"+user.getUid()+";").child("exp").setValue("0");
                                 UserRef.child(UserName+";"+user.getUid()+";").child("queston").setValue("1");
-                                login(UserName,user.getUid(),"1","1","0");
+                                    login(UserName,user.getUid(),"1","1","0");
                             }
                         }
                     }
@@ -319,15 +325,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() == null) {
-                                            UserRef.child(user.getDisplayName()+";"+user.getUid()+";").child("lvl").setValue("1");
+                                            UserRef.child(user.getDisplayName() + ";" + user.getUid() + ";").child("lvl").setValue("1");
                                             UserRef.child(user.getDisplayName()+";"+user.getUid()+";").child("exp").setValue("0");
                                             UserRef.child(user.getDisplayName()+";"+user.getUid()+";").child("queston").setValue("1");
-                                            login(user.getDisplayName(),user.getUid(),"1","1","0");
+                                            String lvl = dataSnapshot.child("lvl").getValue(String.class);
+                                            String exp =dataSnapshot.child("exp").getValue(String.class);
+                                            String queston =dataSnapshot.child("queston").getValue(String.class);
+                                            login(user.getDisplayName(),user.getUid(),lvl,exp,queston);
                                         }else{
-                                            dataSnapshot.child("lvl").getValue();
-                                            dataSnapshot.child("exp").getValue();
-                                            dataSnapshot.child("queston").getValue();
-                                            login(user.getDisplayName(),user.getUid(),dataSnapshot.child("queston").getValue().toString(),dataSnapshot.child("lvl").getValue().toString(), dataSnapshot.child("exp").getValue().toString());
+                                            String lvl = dataSnapshot.child("lvl").getValue(String.class);
+                                            String exp =dataSnapshot.child("exp").getValue(String.class);
+                                            String queston =dataSnapshot.child("queston").getValue(String.class);
+                                            login(user.getDisplayName(),user.getUid(),queston,lvl, exp);
                                         }
                                     }
                                     @Override
@@ -341,50 +350,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void login(final String displayName, final String uid, final String queston, final String lvl, final String exp) {
         if(new CheckController().GpsEnable(this)) {
-            TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
-            EditText etUsername = (EditText) findViewById(R.id.etUsername);
-            tvUsername.setVisibility(View.VISIBLE);
-            etUsername.setVisibility(View.VISIBLE);
-            EmailAction.setVisibility(View.INVISIBLE);
-            menuSignin.setVisibility(View.VISIBLE);
-            Useretv.setVisibility(View.INVISIBLE);
-            UserLvltv.setVisibility(View.INVISIBLE);
-            UserExptv.setVisibility(View.INVISIBLE);
-            UserUIDtv.setVisibility(View.INVISIBLE);
-            UserQuestOn.setVisibility(View.INVISIBLE);
-            logout.setVisibility(View.INVISIBLE);
-            decision=0;
-            QuestRef.child("Quest"+queston)
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            String Quest=dataSnapshotToQuest(dataSnapshot);
-                            String User = displayName+";"+uid+";"+queston+";"+lvl+";"+exp+";";
-                            Intent intent=new Intent(MainActivity.this,MapsActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("User",User);
-                            intent.putExtra("Quest",Quest);
-                            startActivity(intent);
-                        }
+                TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+                EditText etUsername = (EditText) findViewById(R.id.etUsername);
+                tvUsername.setVisibility(View.VISIBLE);
+                etUsername.setVisibility(View.VISIBLE);
+                EmailAction.setVisibility(View.INVISIBLE);
+                menuSignin.setVisibility(View.VISIBLE);
+                Useretv.setVisibility(View.INVISIBLE);
+                UserLvltv.setVisibility(View.INVISIBLE);
+                UserExptv.setVisibility(View.INVISIBLE);
+                UserUIDtv.setVisibility(View.INVISIBLE);
+                UserQuestOn.setVisibility(View.INVISIBLE);
+                logout.setVisibility(View.INVISIBLE);
+                decision = 0;
+                QuestRef.child("Quest" + queston)
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String descQuest = dataSnapshot.child("desc").getValue(String.class);
+                                String expQuest = dataSnapshot.child("exp").getValue(String.class);
+                                String latQuest = dataSnapshot.child("lat").getValue(String.class);
+                                String lngQuest = dataSnapshot.child("long").getValue(String.class);
+                                String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
+                                String questidQuest = dataSnapshot.child("questid").getValue(String.class);
+                                String Quest = questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" + latQuest + ";" + lngQuest + ";";
+                                String User = displayName + ";" + uid + ";" + queston + ";" + lvl + ";" + exp + ";";
+                                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("User", User);
+                                intent.putExtra("Quest", Quest);
+                                startActivity(intent);
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
         }else{
             signOut();
         }
-    }
-
-    private String dataSnapshotToQuest(DataSnapshot dataSnapshot){
-        String descQuest=dataSnapshot.child("desc").getValue().toString();
-        String expQuest=dataSnapshot.child("exp").getValue().toString();
-        String latQuest=dataSnapshot.child("lat").getValue().toString();
-        String lngQuest=dataSnapshot.child("long").getValue().toString();
-        String nextquestidQuest=dataSnapshot.child("nextquestid").getValue().toString();
-        String questidQuest=dataSnapshot.child("questid").getValue().toString();
-        return questidQuest+";"+descQuest+";"+expQuest+";"+nextquestidQuest+";"+latQuest+";"+lngQuest+";";
     }
 
     private void  BackToListMenu() {

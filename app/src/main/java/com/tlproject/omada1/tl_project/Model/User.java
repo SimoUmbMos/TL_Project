@@ -24,6 +24,7 @@ public class User {
     public User(){
         username=" ";
         userid=" ";
+        queston="1";
         lvl=0;
         exp=0;
     }
@@ -41,6 +42,12 @@ public class User {
      * Return the users experience point
      */
     public int getExp(){return exp;}
+
+
+    public String getUserid(){return userid;}
+
+
+    public String getQueston(){return queston;}
     /**
      * Set user Level
      */
@@ -49,6 +56,9 @@ public class User {
      * Set user experience point
      */
     public void setExp(int exp1){exp=exp1;}
+
+
+    public void setQueston(String queston1){queston=queston1;}
     /**
      * Set user data from a string with a format like User.toString();
      */
