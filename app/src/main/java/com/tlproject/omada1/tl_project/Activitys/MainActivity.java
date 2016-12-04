@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init(){
-
         final View.OnClickListener ThisClickListener =this;
         menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
         EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
@@ -147,15 +146,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logout = (Button) findViewById(R.id.LogOut);
 
         menuSignin.setVisibility(View.INVISIBLE);
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.client_ID2))
                 .requestEmail()
                 .build();
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)

@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
-import com.tlproject.omada1.tl_project.Controller.lisener;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;

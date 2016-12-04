@@ -3,15 +3,21 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+
     defaultConfig {
         applicationId "com.tlproject.omada1.tl_project"
         minSdkVersion 18
         targetSdkVersion 25
-        versionName androidGitVersion.name()
-        versionCode androidGitVersion.code()
+        def env = System.getenv()
+        if (env['BUILD_NUMBER'] != null)
+            versionName "2.0.0." + env['BUILD_NUMBER']
+        else
+            versionName "2.0.0.0"
+        versionCode 2
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,14 +27,17 @@ android {
             testCoverageEnabled = true
         }
     }
+
+    productFlavors {
+
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:support-v4:25.0.1'
@@ -51,4 +60,5 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile 'com.android.support:support-annotations:25.0.1'
 }
+
 apply plugin: 'com.google.gms.google-services'
