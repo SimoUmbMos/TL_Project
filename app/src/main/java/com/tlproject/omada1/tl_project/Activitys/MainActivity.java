@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int decision;
     private LinearLayout menuSignin;
     private RelativeLayout EmailAction;
-    private TextView Useretv, UserUIDtv,UserLvltv,UserExptv,UserQuestOn;
-    private Button action,logout;
+    //private TextView Useretv, UserUIDtv,UserLvltv,UserExptv,UserQuestOn;
+    private Button action;//,logout;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference dbref= FirebaseDatabase.getInstance().getReference();
@@ -74,12 +74,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.SignInGoogle:
+                if(new CheckController().GpsEnable(this))
                 signInGoogle();
                 break;
             case R.id.SignInEmail:
+                if(new CheckController().GpsEnable(this))
                 signInEmail();
                 break;
             case R.id.RegistEmail:
+                if(new CheckController().GpsEnable(this))
                 RegistEmail();
                 break;
             case R.id.btProceed:
@@ -92,9 +95,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.BackToMenu:
                 BackToListMenu();
                 break;
-            case R.id.LogOut:
+            /*case R.id.LogOut:
                 signOut();
-                break;
+                break;*/
         }
     }
 
@@ -134,63 +137,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void init(){
-        final View.OnClickListener ThisClickListener =this;
-        menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
-        EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
-        Useretv = (TextView) findViewById(R.id.UsernameDsp);
-        UserUIDtv = (TextView) findViewById(R.id.Useruid);
-        UserLvltv = (TextView) findViewById(R.id.Userlvl);
-        UserExptv = (TextView) findViewById(R.id.Userexp);
-        UserQuestOn = (TextView) findViewById(R.id.Userqueston);
-        action = (Button) findViewById(R.id.btProceed);
-        logout = (Button) findViewById(R.id.LogOut);
+            final View.OnClickListener ThisClickListener = this;
+            menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
+            EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
+            /*Useretv = (TextView) findViewById(R.id.UsernameDsp);
+            UserUIDtv = (TextView) findViewById(R.id.Useruid);
+            UserLvltv = (TextView) findViewById(R.id.Userlvl);
+            UserExptv = (TextView) findViewById(R.id.Userexp);
+            UserQuestOn = (TextView) findViewById(R.id.Userqueston);*/
+            action = (Button) findViewById(R.id.btProceed);
+            //logout = (Button) findViewById(R.id.LogOut);
 
-        menuSignin.setVisibility(View.INVISIBLE);
-        GoogleSignInOptions gso = new GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.client_ID2))
-                .requestEmail()
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                final FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    UserRef.child(user.getDisplayName()+";"+user.getUid()+";")
-                            .addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String lvl = dataSnapshot.child("lvl").getValue(String.class);
-                                    String exp =dataSnapshot.child("exp").getValue(String.class);
-                                    String queston =dataSnapshot.child("queston").getValue(String.class);
-                                    if(lvl!=null && exp!=null && queston!=null){
-                                        login(user.getDisplayName(),user.getUid(),queston,lvl,exp);
-                                    }else{
-                                        FirebaseAuth.getInstance().signOut();
+            menuSignin.setVisibility(View.INVISIBLE);
+            GoogleSignInOptions gso = new GoogleSignInOptions
+                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+            mAuth = FirebaseAuth.getInstance();
+            mAuthListener = new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    final FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        UserRef.child(user.getDisplayName() + ";" + user.getUid() + ";")
+                                .addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        String lvl = dataSnapshot.child("lvl").getValue(String.class);
+                                        String exp = dataSnapshot.child("exp").getValue(String.class);
+                                        String queston = dataSnapshot.child("queston").getValue(String.class);
+                                        if (lvl != null && exp != null && queston != null) {
+                                            login(user.getDisplayName(), user.getUid(), queston, lvl, exp);
+                                        } else {
+                                            FirebaseAuth.getInstance().signOut();
+                                        }
                                     }
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {}
-                            });
-                    Log.d("LoginActivity", "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    menuSignin.setVisibility(View.VISIBLE);
-                    decision = 0;
-                    findViewById(R.id.SignInGoogle).setOnClickListener(ThisClickListener);
-                    findViewById(R.id.SignInEmail).setOnClickListener(ThisClickListener);
-                    findViewById(R.id.RegistEmail).setOnClickListener(ThisClickListener);
-                    findViewById(R.id.btProceed).setOnClickListener(ThisClickListener);
-                    findViewById(R.id.BackToMenu).setOnClickListener(ThisClickListener);
-                    findViewById(R.id.LogOut).setOnClickListener(ThisClickListener);
-                    Log.d("LoginActivity", "onAuthStateChanged:signed_out");
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
+                        Log.d("LoginActivity", "onAuthStateChanged:signed_in:" + user.getUid());
+                    } else {
+                        menuSignin.setVisibility(View.VISIBLE);
+                        decision = 0;
+                        findViewById(R.id.SignInGoogle).setOnClickListener(ThisClickListener);
+                        findViewById(R.id.SignInEmail).setOnClickListener(ThisClickListener);
+                        findViewById(R.id.RegistEmail).setOnClickListener(ThisClickListener);
+                        findViewById(R.id.btProceed).setOnClickListener(ThisClickListener);
+                        findViewById(R.id.BackToMenu).setOnClickListener(ThisClickListener);
+                        //findViewById(R.id.LogOut).setOnClickListener(ThisClickListener);
+                        Log.d("LoginActivity", "onAuthStateChanged:signed_out");
+                    }
                 }
-            }
-        };
+            };
     }
 
     private void  signInGoogle() {
@@ -344,48 +349,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void login(final String displayName, final String uid, final String queston, final String lvl, final String exp) {
-        if(new CheckController().GpsEnable(this)) {
-                TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
-                EditText etUsername = (EditText) findViewById(R.id.etUsername);
-                tvUsername.setVisibility(View.VISIBLE);
-                etUsername.setVisibility(View.VISIBLE);
-                EmailAction.setVisibility(View.INVISIBLE);
-                menuSignin.setVisibility(View.VISIBLE);
-                Useretv.setVisibility(View.INVISIBLE);
-                UserLvltv.setVisibility(View.INVISIBLE);
-                UserExptv.setVisibility(View.INVISIBLE);
-                UserUIDtv.setVisibility(View.INVISIBLE);
-                UserQuestOn.setVisibility(View.INVISIBLE);
-                logout.setVisibility(View.INVISIBLE);
-                decision = 0;
-                QuestRef.child("Quest" + queston)
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                String descQuest = dataSnapshot.child("desc").getValue(String.class);
-                                String expQuest = dataSnapshot.child("exp").getValue(String.class);
-                                String latQuest = dataSnapshot.child("lat").getValue(String.class);
-                                String lngQuest = dataSnapshot.child("long").getValue(String.class);
-                                String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
-                                String questidQuest = dataSnapshot.child("questid").getValue(String.class);
-                                String Quest = questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" + latQuest + ";" + lngQuest + ";";
-                                String User = displayName + ";" + uid + ";" + queston + ";" + lvl + ";" + exp + ";";
-                                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtra("User", User);
-                                intent.putExtra("Quest", Quest);
-                                startActivity(intent);
+        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+        EditText etUsername = (EditText) findViewById(R.id.etUsername);
+        tvUsername.setVisibility(View.VISIBLE);
+        etUsername.setVisibility(View.VISIBLE);
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.VISIBLE);
+        /*Useretv.setVisibility(View.INVISIBLE);
+        UserLvltv.setVisibility(View.INVISIBLE);
+        UserExptv.setVisibility(View.INVISIBLE);
+        UserUIDtv.setVisibility(View.INVISIBLE);
+        UserQuestOn.setVisibility(View.INVISIBLE);
+        logout.setVisibility(View.INVISIBLE);*/
+        decision = 0;
+        QuestRef.child("Quest" + queston)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String descQuest = dataSnapshot.child("desc").getValue(String.class);
+                        String expQuest = dataSnapshot.child("exp").getValue(String.class);
+                        String latQuest = dataSnapshot.child("lat").getValue(String.class);
+                        String lngQuest = dataSnapshot.child("long").getValue(String.class);
+                        String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
+                        String questidQuest = dataSnapshot.child("questid").getValue(String.class);
+                        String Quest = questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" + latQuest + ";" + lngQuest + ";";
+                        String User = displayName + ";" + uid + ";" + queston + ";" + lvl + ";" + exp + ";";
+                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("User", User);
+                        intent.putExtra("Quest", Quest);
+                        startActivity(intent);
+                    }
 
-                            }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-        }else{
-            signOut();
-        }
+                    }
+                });
     }
 
     private void  BackToListMenu() {
@@ -409,12 +409,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             etUsername.setVisibility(View.VISIBLE);
                             EmailAction.setVisibility(View.INVISIBLE);
                             menuSignin.setVisibility(View.VISIBLE);
-                            Useretv.setVisibility(View.INVISIBLE);
+                            /*Useretv.setVisibility(View.INVISIBLE);
                             UserLvltv.setVisibility(View.INVISIBLE);
                             UserExptv.setVisibility(View.INVISIBLE);
                             UserUIDtv.setVisibility(View.INVISIBLE);
                             UserQuestOn.setVisibility(View.INVISIBLE);
-                            logout.setVisibility(View.INVISIBLE);
+                            logout.setVisibility(View.INVISIBLE);*/
                             decision=0;
                         }
                     }

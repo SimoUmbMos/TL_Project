@@ -116,6 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (meter <= QuestOnMapRadius) {
                     CurUController.QuestComplete(CurUser, CurQuest);
                     CurQController.NextQuest(CurQuest);
+
                 } else {
                     Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
                             .show();
@@ -127,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void init(){
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.client_ID2))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
