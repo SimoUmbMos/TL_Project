@@ -43,8 +43,9 @@ public class DataSaveTest {
         Instrumentation.ActivityMonitor logAct = getInstrumentation()
                 .addMonitor(MainActivity.class.getName(), null, false);
 
-        onView(allOf(withId(R.id.SignInEmail), withParent(allOf(withId(R.id.SignInMenu),
-                withParent(withId(R.id.activity_main)))), isDisplayed())).perform(click());
+        MainActivity logActivity =(MainActivity) getInstrumentation()
+                .waitForMonitorWithTimeout(logAct, 5000);
+        onView(withId(R.id.SignInEmail)).perform(click());
 
         ViewInteraction appCompatEditText = onView(allOf(withId(R.id.etEmail),
                 withParent(allOf(withId(R.id.EmailAction), withParent(withId(R.id.activity_main)))),
@@ -107,13 +108,16 @@ public class DataSaveTest {
                 isDisplayed()));
         button2.perform(click());
 
+        mapActivity = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 5000);
+
+        mapActivity = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 5000);
 
         ViewInteraction button3 = onView(allOf(withId(R.id.btprofile),
                 withParent(allOf(withId(R.id.activity_map), withParent(withId(android.R.id.content)))),
                 isDisplayed()));
         button3.perform(click());
 
-        profActivity = (ProfileActivity) getInstrumentation().waitForMonitorWithTimeout(profAct, 5000);
+        profActivity = (ProfileActivity) getInstrumentation().waitForMonitorWithTimeout(profAct, 15000);
 
         ViewInteraction textView7 = onView(allOf(withId(R.id.questdesc), isDisplayed()));
         textView7.check(matches(withText("telos")));
@@ -139,8 +143,7 @@ public class DataSaveTest {
                 isDisplayed()));
         button4.perform(click());
 
-        MainActivity logActivity =(MainActivity) getInstrumentation()
-                .waitForMonitorWithTimeout(logAct, 5000);
+        logActivity =(MainActivity) getInstrumentation().waitForMonitorWithTimeout(logAct, 5000);
 
         ViewInteraction appCompatButton5 = onView(allOf(withId(R.id.SignInEmail),
                 withText("Sign In with Email"), withParent(allOf(withId(R.id.SignInMenu),
@@ -162,8 +165,7 @@ public class DataSaveTest {
                 isDisplayed()));
         appCompatEditText11.perform(replaceText("test123"), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton6 = onView(allOf(withId(R.id.btProceed), withParent(
-                allOf(withId(R.id.EmailAction), withParent(withId(R.id.activity_main)))), isDisplayed()));
+        ViewInteraction appCompatButton6 = onView(allOf(withId(R.id.btProceed), isDisplayed()));
         appCompatButton6.perform(click());
 
         mapActivity = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 5000);
