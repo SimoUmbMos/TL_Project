@@ -18,9 +18,9 @@
         app:srcCompat="@mipmap/loginpic"
         android:id="@+id/imageView2"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true" />
     <!--
         <TextView
             android:layout_width="wrap_content"
