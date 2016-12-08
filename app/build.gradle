@@ -8,11 +8,8 @@ android {
         applicationId "com.tlproject.omada1.tl_project"
         minSdkVersion 18
         targetSdkVersion 25
-        def env = System.getenv()
-        if (env['VERSION_NUMBER'] != null)
-            versionName env['VERSION_NUMBER']
-        else
-            versionName "2.0.0.0"
+        ext.buildNumber = System.getenv("VERSION_NUMBER") ?: "2.0.0.0"
+        versionName "$buildNumber"
         versionCode 2
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
