@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tlproject.omada1.tl_project.BuildConfig;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.R;
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TextView version = (TextView) findViewById(R.id.version);
+        version.setText("ver:"+BuildConfig.VERSION_NAME);
+
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
