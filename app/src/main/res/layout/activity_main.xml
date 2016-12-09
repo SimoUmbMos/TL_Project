@@ -15,7 +15,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
+        app:srcCompat="@color/cast_intro_overlay_button_background_color"
         android:id="@+id/imageView2"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"

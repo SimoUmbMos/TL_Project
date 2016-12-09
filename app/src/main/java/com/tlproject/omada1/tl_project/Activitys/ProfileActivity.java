@@ -1,17 +1,31 @@
 package com.tlproject.omada1.tl_project.Activitys;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 
 public class ProfileActivity extends AppCompatActivity {
+    com.tlproject.omada1.tl_project.Model.User CurUser;
+    private String NewUsername = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +36,9 @@ public class ProfileActivity extends AppCompatActivity {
         String Quest = extras.getString("Quest");
         Quest CurQuest=new Quest();
         CurQuest.setQuest(Quest);
-        com.tlproject.omada1.tl_project.Model.User curruser = new User();
-        curruser.setUser(User);
+        CurUser = new User();
+        CurUser.setUser(User);
+
 
         TextView username=(TextView) findViewById(R.id.usernameprofile);
         TextView lvl=(TextView) findViewById(R.id.lvl);
@@ -32,12 +47,12 @@ public class ProfileActivity extends AppCompatActivity {
         TextView questdesc=(TextView) findViewById(R.id.questdesc);
         ProgressBar exp=(ProgressBar) findViewById(R.id.expbar);
 
-        username.setText(curruser.getUsername());
-        lvl.setText(String.valueOf(curruser.getLvl()));
+        username.setText(CurUser.getUsername());
+        lvl.setText(String.valueOf(CurUser.getLvl()));
         UserController control=new UserController();
         questdesc.setText(CurQuest.getDesc());
-        int expcur=curruser.getExp();
-        int nextexp=control.expforLvl(curruser);
+        int expcur=CurUser.getExp();
+        int nextexp=control.expforLvl(CurUser);
         curexp.setText(String.valueOf(expcur));
         nextlvlexp.setText(String.valueOf(nextexp));
         int prog=(expcur*100)/nextexp;
@@ -47,5 +62,57 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void back(View view) {
         finish();
+    }
+
+    public void Reset(View view) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog2);
+        Button ButtonYes = (Button) dialog.findViewById(R.id.btn_yes);
+        Button ButtonNo = (Button) dialog.findViewById(R.id.btn_no);
+        ButtonYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
+                dbref.child("lvl").setValue("1");
+                dbref.child("exp").setValue("0");
+                dbref.child("queston").setValue("1");
+                dialog.dismiss();
+            }
+        });
+        ButtonNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
+    public void Edit(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("New username:");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_VARIATION_NORMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
+
+                NewUsername = input.getText().toString();
+                //dbref.setValue(NewUsername+ ";" +CurUser.getUserid() + ";");
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }
