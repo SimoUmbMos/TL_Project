@@ -50,23 +50,12 @@
         android:id="@+id/nextlvlexp" />
 
     <TextView
-        android:text="@string/usernamer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView7"
-        android:layout_above="@+id/textView10"
-        android:layout_alignRight="@+id/textView10"
-        android:layout_alignEnd="@+id/textView10" />
-
-    <TextView
-        android:text="@string/usernamet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/usernameprofile"
-        android:layout_alignBaseline="@+id/textView7"
-        android:layout_alignBottom="@+id/textView7"
-        android:layout_alignLeft="@+id/lvl"
-        android:layout_alignStart="@+id/lvl" />
+        android:id="@+id/textView14"
+        android:text="@string/current_quest"
+        android:layout_below="@+id/btback"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:text="@string/back"
@@ -75,24 +64,25 @@
         android:id="@+id/btback"
         android:onClick="back"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true" />
 
-    <TextView
+    <Button
+        android:text="Reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView14"
-        android:text="@string/current_quest"
-        android:layout_below="@+id/btback"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/btreset"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:onClick="Reset" />
 
-    <TextView
-        android:text="@string/lvl"
+    <Button
+        android:text="Edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lvl"
-        android:layout_marginRight="77dp"
-        android:layout_below="@+id/usernameprofile"
-        android:layout_toEndOf="@+id/btback" />
+        android:layout_above="@+id/textView14"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/btedit"
+        android:onClick="Edit" />
 
     <TextView
         android:text="@string/questdesc"
@@ -101,8 +91,16 @@
         android:id="@+id/questdesc"
         android:layout_below="@+id/textView14"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/textView13" />
+        android:layout_above="@+id/textView13"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="@string/usernamer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView7"
+        android:layout_above="@+id/textView10"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:text="@string/level"
@@ -111,14 +109,32 @@
         android:id="@+id/textView10"
         android:layout_marginRight="19dp"
         android:layout_above="@+id/textView9"
-        android:layout_toStartOf="@+id/textView14" />
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/usernamet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameprofile"
+        android:layout_above="@+id/lvl"
+        android:layout_toStartOf="@+id/btedit" />
+
+    <TextView
+        android:text="@string/lvl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lvl"
+        android:layout_marginRight="77dp"
+        android:layout_below="@+id/textView7"
+        android:layout_alignStart="@+id/usernameprofile" />
 
     <TextView
         android:text="@string/userprofile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView13"
-        android:layout_above="@+id/textView7"
-        android:layout_alignStart="@+id/btback" />
+        android:layout_above="@+id/usernameprofile"
+        android:layout_alignStart="@+id/textView14" />
+
 
 </RelativeLayout>

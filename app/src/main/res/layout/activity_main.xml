@@ -15,80 +15,21 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
+        app:srcCompat="@color/cast_intro_overlay_button_background_color"
         android:id="@+id/imageView2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
-    <!--
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/UsernameDsp"
-            android:visibility="invisible"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar3" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Useruid"
-            android:layout_below="@+id/UsernameDsp"
-            android:visibility="invisible"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Userlvl"
-            android:layout_below="@+id/Useruid"
-            android:visibility="invisible"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Userexp"
-            android:visibility="invisible"
-            android:layout_below="@+id/Userlvl"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Userqueston"
-            android:visibility="invisible"
-            android:layout_below="@+id/Userexp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
-        <Button
-            android:text="LogOut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/LogOut"
-            android:visibility="invisible"
-            android:layout_below="@+id/Userqueston"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true" />
-        -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:id="@+id/EmailAction"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        android:layout_below="@+id/toolbar3">
 
         <EditText
             android:layout_width="wrap_content"
@@ -183,8 +124,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/SignInMenu"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar3">
 
         <Button
             android:text="@string/sign_in_with_google"
@@ -220,4 +161,23 @@
             android:background="@android:drawable/btn_default" />
 
     </LinearLayout>
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:background="?attr/colorPrimary"
+        android:theme="?attr/actionBarTheme"
+        android:minHeight="?attr/actionBarSize"
+        android:id="@+id/toolbar3"
+        android:layout_alignBottom="@+id/version" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/version"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_light_background"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

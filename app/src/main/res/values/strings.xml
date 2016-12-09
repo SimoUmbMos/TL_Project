@@ -19,7 +19,7 @@
     <string name="title_activity_regist">Register</string>
     <string name="usernamet">[username]</string>
     <string name="curexp">[curexp]</string>
-    <string name="exp">exp:</string>
+    <string name="exp">Exp:</string>
     <string name="nextlvlexp">[nextlvlexp]</string>
     <string name="back">Back</string>
     <string name="lvl">[lvl]</string>

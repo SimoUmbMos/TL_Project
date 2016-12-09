@@ -8,11 +8,8 @@ android {
         applicationId "com.tlproject.omada1.tl_project"
         minSdkVersion 18
         targetSdkVersion 25
-        def env = System.getenv()
-        if (env['BUILD_NUMBER'] != null)
-            versionName "2.0.0." + env['BUILD_NUMBER']
-        else
-            versionName "2.0.0.0"
+        ext.buildNumber = System.getenv("VERSION_NUMBER") ?: "2.0.0.0"
+        versionName "$buildNumber"
         versionCode 2
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,7 +26,6 @@ android {
     }
 
     productFlavors {
-
     }
 
     lintOptions {
@@ -64,5 +60,5 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     androidTestCompile 'com.android.support:support-annotations:25.0.1'
 }
-
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'jacoco-android'
