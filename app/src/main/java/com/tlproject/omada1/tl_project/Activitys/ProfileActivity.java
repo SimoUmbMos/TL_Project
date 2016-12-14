@@ -12,10 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.Controller.UserController;
@@ -25,7 +21,6 @@ import com.tlproject.omada1.tl_project.R;
 
 public class ProfileActivity extends AppCompatActivity {
     com.tlproject.omada1.tl_project.Model.User CurUser;
-    private String NewUsername = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.show();
 
-    }
+    } //TODO
 
     public void Edit(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -95,13 +90,12 @@ public class ProfileActivity extends AppCompatActivity {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_VARIATION_NORMAL);
         builder.setView(input);
-
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
 
-                NewUsername = input.getText().toString();
+                String NewUsername = input.getText().toString();
                 //dbref.setValue(NewUsername+ ";" +CurUser.getUserid() + ";");
 
             }
@@ -112,7 +106,6 @@ public class ProfileActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
-
         builder.show();
-    }
+    } //TODO
 }

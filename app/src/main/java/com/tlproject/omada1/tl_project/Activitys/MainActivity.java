@@ -47,13 +47,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int decision;
     private LinearLayout menuSignin;
     private RelativeLayout EmailAction;
-    //private TextView Useretv, UserUIDtv,UserLvltv,UserExptv,UserQuestOn;
-    private Button action;//,logout;
+    private Button action;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference dbref= FirebaseDatabase.getInstance().getReference();
-    private DatabaseReference UserRef = dbref.child("Users");
-    private DatabaseReference QuestRef = dbref.child("Quest");
+    private DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+    private DatabaseReference QuestRef = FirebaseDatabase.getInstance().getReference().child("Quest");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +97,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.BackToMenu:
                 BackToListMenu();
                 break;
-            /*case R.id.LogOut:
-                signOut();
-                break;*/
         }
     }
 
@@ -113,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
@@ -144,14 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             final View.OnClickListener ThisClickListener = this;
             menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
             EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
-            /*Useretv = (TextView) findViewById(R.id.UsernameDsp);
-            UserUIDtv = (TextView) findViewById(R.id.Useruid);
-            UserLvltv = (TextView) findViewById(R.id.Userlvl);
-            UserExptv = (TextView) findViewById(R.id.Userexp);
-            UserQuestOn = (TextView) findViewById(R.id.Userqueston);*/
             action = (Button) findViewById(R.id.btProceed);
-            //logout = (Button) findViewById(R.id.LogOut);
-
             menuSignin.setVisibility(View.INVISIBLE);
             GoogleSignInOptions gso = new GoogleSignInOptions
                     .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -195,12 +182,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         findViewById(R.id.RegistEmail).setOnClickListener(ThisClickListener);
                         findViewById(R.id.btProceed).setOnClickListener(ThisClickListener);
                         findViewById(R.id.BackToMenu).setOnClickListener(ThisClickListener);
-                        //findViewById(R.id.LogOut).setOnClickListener(ThisClickListener);
                         Log.d("LoginActivity", "onAuthStateChanged:signed_out");
                     }
                 }
             };
-    }
+    } //TODO
 
     private void  signInGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -259,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
-    }
+    } //TODO
 
     private void  ProceedRegist() {
         EditText emailET=(EditText) findViewById(R.id.etEmail);
@@ -269,10 +255,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("LoginActivity", "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(MainActivity.this, "Fail:Email Exist",
                                     Toast.LENGTH_SHORT).show();
@@ -294,18 +276,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
-    }
+    } //TODO
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d("LoginActivity", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             firebaseAuthWithGoogle(acct);
-        } /*else {
-            //Cant Login
-        }*/
-    }
+        }
+    } //TODO
 
     private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
         Log.d("LoginActivity", "firebaseAuthWithGoogle:" + acct.getId());
@@ -350,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 });
-    }
+    } //TODO
 
     private void login(final String displayName, final String uid, final String queston, final String lvl, final String exp) {
         TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
@@ -359,12 +338,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etUsername.setVisibility(View.VISIBLE);
         EmailAction.setVisibility(View.INVISIBLE);
         menuSignin.setVisibility(View.VISIBLE);
-        /*Useretv.setVisibility(View.INVISIBLE);
-        UserLvltv.setVisibility(View.INVISIBLE);
-        UserExptv.setVisibility(View.INVISIBLE);
-        UserUIDtv.setVisibility(View.INVISIBLE);
-        UserQuestOn.setVisibility(View.INVISIBLE);
-        logout.setVisibility(View.INVISIBLE);*/
         decision = 0;
         QuestRef.child("Quest" + queston)
                 .addValueEventListener(new ValueEventListener() {
@@ -390,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 });
-    }
+    } //TODO
 
     private void  BackToListMenu() {
         TextView tvUsername=(TextView) findViewById(R.id.tvUsername);
@@ -413,18 +386,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             etUsername.setVisibility(View.VISIBLE);
                             EmailAction.setVisibility(View.INVISIBLE);
                             menuSignin.setVisibility(View.VISIBLE);
-                            /*Useretv.setVisibility(View.INVISIBLE);
-                            UserLvltv.setVisibility(View.INVISIBLE);
-                            UserExptv.setVisibility(View.INVISIBLE);
-                            UserUIDtv.setVisibility(View.INVISIBLE);
-                            UserQuestOn.setVisibility(View.INVISIBLE);
-                            logout.setVisibility(View.INVISIBLE);*/
                             decision=0;
                         }
                     }
                 });
         FirebaseAuth.getInstance().signOut();
-    }
+    } //TODO
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
