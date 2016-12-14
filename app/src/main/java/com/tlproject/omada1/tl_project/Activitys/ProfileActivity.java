@@ -93,11 +93,9 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
-
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
                 String NewUsername = input.getText().toString();
-                //dbref.setValue(NewUsername+ ";" +CurUser.getUserid() + ";");
-
+                dbref.child("username").setValue(NewUsername);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

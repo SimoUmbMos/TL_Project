@@ -15,7 +15,7 @@ public class UserController implements UserInterface {
 
     @Override
     public void QuestComplete(User CurUser, Quest CurQuest) {
-        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
         int exp=CurUser.getExp();
         int expn=expforLvl(CurUser);
         exp=exp+CurQuest.getExp();

@@ -9,7 +9,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.tlproject.omada1.tl_project.Activitys.ProfileActivity">
+    tools:context="com.tlproject.omada1.tl_project.Activitys.ProfileActivity"
+    android:background="@mipmap/backgroundprof">
 
     <TextView
         android:text="@string/curexp"
@@ -112,12 +113,21 @@
         android:layout_alignParentStart="true" />
 
     <TextView
+        android:text="@string/userprofile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView13"
+        android:layout_above="@+id/usernameprofile"
+        android:layout_alignStart="@+id/textView14" />
+
+    <TextView
         android:text="@string/usernamet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/usernameprofile"
         android:layout_above="@+id/lvl"
-        android:layout_toStartOf="@+id/btedit" />
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView7" />
 
     <TextView
         android:text="@string/lvl"
@@ -126,15 +136,8 @@
         android:id="@+id/lvl"
         android:layout_marginRight="77dp"
         android:layout_below="@+id/textView7"
-        android:layout_alignStart="@+id/usernameprofile" />
-
-    <TextView
-        android:text="@string/userprofile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView13"
-        android:layout_above="@+id/usernameprofile"
-        android:layout_alignStart="@+id/textView14" />
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView7" />
 
 
 </RelativeLayout>
