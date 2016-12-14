@@ -67,8 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setquestonmap(CurQuest.getLat(), CurQuest.getLng());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
         mMap.setMyLocationEnabled(true);
-        LatLng Loc = new LatLng(Lat,Long);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(Loc));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(Lat,Long)));
         mMap.animateCamera(zoom);
     }
 
@@ -78,8 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1: {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     init();
                 } else {
                     Toast.makeText(MapsActivity.this, "Permission denied to read your Location",
@@ -123,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
-    }
+    } //TODO
 
     public void init(){
         GoogleSignInOptions gso = new GoogleSignInOptions
@@ -159,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findViewById(R.id.btaction).setClickable(true);
-    }
+    }//TODO
 
     float distof(double lat,double lng){
         GPSTracker gps = new GPSTracker(this);
@@ -176,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         loc2.setLatitude(lat);
         loc2.setLongitude(lng);
         return loc1.distanceTo(loc2);
-    }
+    }//TODO
 
     void setquestonmap(double lat,double lng){
         mMap.clear();
