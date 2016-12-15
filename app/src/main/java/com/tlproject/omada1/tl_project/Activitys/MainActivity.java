@@ -155,15 +155,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                     final FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
-                        UserRef.child(user.getDisplayName() + ";" + user.getUid() + ";")
+                        UserRef.child(user.getUid() + ";")
                                 .addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         String lvl = dataSnapshot.child("lvl").getValue(String.class);
                                         String exp = dataSnapshot.child("exp").getValue(String.class);
                                         String queston = dataSnapshot.child("queston").getValue(String.class);
-                                        if (lvl != null && exp != null && queston != null) {
-                                            login(user.getDisplayName(), user.getUid(), queston, lvl, exp);
+                                        String username =dataSnapshot.child("username").getValue(String.class);
+                                        if (username!=null && lvl != null && exp != null && queston != null) {
+                                            login(username, user.getUid(), queston, lvl, exp);
                                         } else {
                                             FirebaseAuth.getInstance().signOut();
                                         }
@@ -228,14 +229,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (user != null) {
                                 EmailAction.setVisibility(View.INVISIBLE);
                                 menuSignin.setVisibility(View.INVISIBLE);
-                                UserRef.child(user.getDisplayName()+";"+user.getUid()+";").addListenerForSingleValueEvent(new ValueEventListener() {
+                                UserRef.child(user.getUid()+";").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         String Uid = user.getUid();
                                         String queston = dataSnapshot.child("queston").getValue(String.class);
                                         String lvl=dataSnapshot.child("lvl").getValue(String.class);
                                         String exp=dataSnapshot.child("exp").getValue(String.class);
-                                            login(user.getDisplayName(), Uid,queston,lvl,exp);
+                                        String username =dataSnapshot.child("username").getValue(String.class);
+                                        login(username, Uid,queston,lvl,exp);
 
                                     }
                                     @Override
@@ -268,10 +270,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(UserName).build();
                                 user.updateProfile(profileUpdates);
-                                UserRef.child(UserName + ";" + user.getUid() + ";").child("lvl").setValue("1");
-                                UserRef.child(UserName+";"+user.getUid()+";").child("exp").setValue("0");
-                                UserRef.child(UserName+";"+user.getUid()+";").child("queston").setValue("1");
-                                    login(UserName,user.getUid(),"1","1","0");
+                                UserRef.child(user.getUid() + ";").child("lvl").setValue("1");
+                                UserRef.child(user.getUid()+";").child("exp").setValue("0");
+                                UserRef.child(user.getUid()+";").child("queston").setValue("1");
+                                UserRef.child(user.getUid()+";").child("username").setValue(UserName);
+                                login(UserName,user.getUid(),"1","1","0");
                             }
                         }
                     }
@@ -303,23 +306,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(user!=null) {
                                 EmailAction.setVisibility(View.INVISIBLE);
                                 menuSignin.setVisibility(View.INVISIBLE);
-                                UserRef.child(user.getDisplayName()+";"+user.getUid()+";")
+                                UserRef.child(user.getUid()+";")
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.getValue() == null) {
-                                            UserRef.child(user.getDisplayName() + ";" + user.getUid() + ";").child("lvl").setValue("1");
-                                            UserRef.child(user.getDisplayName()+";"+user.getUid()+";").child("exp").setValue("0");
-                                            UserRef.child(user.getDisplayName()+";"+user.getUid()+";").child("queston").setValue("1");
-                                            String lvl = dataSnapshot.child("lvl").getValue(String.class);
-                                            String exp =dataSnapshot.child("exp").getValue(String.class);
-                                            String queston =dataSnapshot.child("queston").getValue(String.class);
-                                            login(user.getDisplayName(),user.getUid(),lvl,exp,queston);
+                                            UserRef.child(user.getUid() + ";").child("lvl").setValue("1");
+                                            UserRef.child(user.getUid()+";").child("exp").setValue("0");
+                                            UserRef.child(user.getUid()+";").child("queston").setValue("1");
+                                            UserRef.child(user.getUid()+";").child("username").setValue(user.getDisplayName());
+                                            login(user.getDisplayName(),user.getUid(),"1","1","0");
                                         }else{
                                             String lvl = dataSnapshot.child("lvl").getValue(String.class);
                                             String exp =dataSnapshot.child("exp").getValue(String.class);
                                             String queston =dataSnapshot.child("queston").getValue(String.class);
-                                            login(user.getDisplayName(),user.getUid(),queston,lvl, exp);
+                                            String username =dataSnapshot.child("username").getValue(String.class);
+                                            login(username,user.getUid(),queston,lvl, exp);
                                         }
                                     }
                                     @Override
