@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Activitys;
+package com.tlproject.omada1.tl_project.Activities;
 
 
 import android.app.Instrumentation;

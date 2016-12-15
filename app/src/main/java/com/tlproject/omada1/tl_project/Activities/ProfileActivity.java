@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Activitys;
+package com.tlproject.omada1.tl_project.Activities;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -67,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity {
         ButtonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUsername()+ ";" +CurUser.getUserid() + ";");
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
                 dbref.child("lvl").setValue("1");
                 dbref.child("exp").setValue("0");
                 dbref.child("queston").setValue("1");

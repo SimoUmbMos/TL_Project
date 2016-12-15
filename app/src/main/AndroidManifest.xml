@@ -22,11 +22,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activitys.MapsActivity"
+            android:name=".Activities.MapsActivity"
             android:label="@string/title_activity_maps">
         </activity>
         <activity
-            android:name=".Activitys.MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="Riddle Game">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activitys.ProfileActivity"
+            android:name=".Activities.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>
     </application>

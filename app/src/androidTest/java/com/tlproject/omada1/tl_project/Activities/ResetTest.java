@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Activitys;
+package com.tlproject.omada1.tl_project.Activities;
 
 
 import android.app.Instrumentation;
@@ -6,15 +6,12 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.R;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,22 +30,16 @@ import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class ProfileResetTest {
+public class ResetTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
 
     @Test
-    public void profileResetTest() {
-
+    public void resetTest() {
         Instrumentation.ActivityMonitor mapAct = getInstrumentation()
                 .addMonitor(MapsActivity.class.getName(), null, false);
 
-        Instrumentation.ActivityMonitor profAct = getInstrumentation()
-                .addMonitor(ProfileActivity.class.getName(), null, false);
-
-        Instrumentation.ActivityMonitor logAct = getInstrumentation()
-                .addMonitor(MainActivity.class.getName(), null, false);
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.SignInEmail), withText("Sign In with Email"),
                         withParent(allOf(withId(R.id.SignInMenu),
@@ -68,7 +59,7 @@ public class ProfileResetTest {
                         withParent(allOf(withId(R.id.EmailAction),
                                 withParent(withId(R.id.activity_main)))),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("testreset@a.com"), closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText("s@s.com"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.etPassword),
@@ -83,7 +74,9 @@ public class ProfileResetTest {
                                 withParent(withId(R.id.activity_main)))),
                         isDisplayed()));
         appCompatButton2.perform(click());
-          MapsActivity mapActivity = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 5000);
+
+        MapsActivity mapActivity = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 3000);
+
         ViewInteraction button = onView(
                 allOf(withId(R.id.btprofile), withText("Profile"),
                         withParent(allOf(withId(R.id.activity_map),
@@ -91,17 +84,8 @@ public class ProfileResetTest {
                         isDisplayed()));
         button.perform(click());
 
-        /*ViewInteraction textView = onView(
-                allOf(withId(R.id.lvl), withText("2"),
-                        childAtPosition(
-                                allOf(withId(R.id.activity_profile),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                9),
-                        isDisplayed()));
-        textView.check(matches(withText("2")));*/
-          onView(withId(R.id.lvl)).check(matches(withText("2")));
+        onView(withId(R.id.lvl)).check(matches(withText("2")));
+
         ViewInteraction appCompatButton3 = onView(
                 allOf(withId(R.id.btreset), withText("Reset"),
                         withParent(allOf(withId(R.id.activity_profile),
@@ -113,16 +97,16 @@ public class ProfileResetTest {
                 allOf(withId(R.id.btn_yes), withText("Yes"), isDisplayed()));
         appCompatButton4.perform(click());
 
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.lvl), withText("1"),
-                        childAtPosition(
-                                allOf(withId(R.id.activity_profile),
-                                        childAtPosition(
-                                                withId(android.R.id.content),
-                                                0)),
-                                9),
+        MapsActivity mapActivity2 = (MapsActivity) getInstrumentation().waitForMonitorWithTimeout(mapAct, 1000);
+
+        ViewInteraction button2 = onView(
+                allOf(withId(R.id.btprofile), withText("Profile"),
+                        withParent(allOf(withId(R.id.activity_map),
+                                withParent(withId(android.R.id.content)))),
                         isDisplayed()));
-        textView2.check(matches(withText("1")));
+        button2.perform(click());
+
+        onView(withId(R.id.lvl)).check(matches(withText("1")));
 
         ViewInteraction appCompatButton5 = onView(
                 allOf(withId(R.id.btback), withText("Back"),
@@ -130,13 +114,6 @@ public class ProfileResetTest {
                                 withParent(withId(android.R.id.content)))),
                         isDisplayed()));
         appCompatButton5.perform(click());
-
-        ViewInteraction button2 = onView(
-                allOf(withId(R.id.btlogout), withText("logout"),
-                        withParent(allOf(withId(R.id.activity_map),
-                                withParent(withId(android.R.id.content)))),
-                        isDisplayed()));
-        button2.perform(click());
 
         ViewInteraction button3 = onView(
                 allOf(withId(R.id.btlogout), withText("logout"),
@@ -147,22 +124,11 @@ public class ProfileResetTest {
 
     }
 
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
+    @After
+    public void resetProfileToLvl_2()
+    {
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child("ELzqwPZ2SafIfIxjvrUSsvLJ55l2;");
+        dbref.child("lvl").setValue("2");
     }
+
 }
