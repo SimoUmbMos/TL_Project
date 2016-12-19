@@ -3,7 +3,6 @@ package com.tlproject.omada1.tl_project.Activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,9 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
-import com.tlproject.omada1.tl_project.Controller.CheckController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
-import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
@@ -40,7 +37,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private double Lat, Long;
     private GoogleMap mMap;
-    private UserController CurUController;
     private QuestController CurQController;
     private User CurUser;
     private Quest CurQuest;
@@ -108,20 +104,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void ActionClick(View view) {
         if(CurQController.QuestIsTrue(CurQuest)) {
-            CheckController GpsEnable=new CheckController();
-            if(GpsEnable.GpsEnable(this)) {
-                float meter = distof(CurQuest.getLat(), CurQuest.getLng());
-                if (meter <= QuestOnMapRadius) {
-                    CurUController.QuestComplete(CurUser, CurQuest);
-                    CurQController.NextQuest(CurQuest);
-
-                } else {
+            GPSTracker gps = new GPSTracker(this);
+            if (gps.canGetLocation()) {
+                Lat = gps.getLatitude();
+                Long = gps.getLongitude();
+                if(!CurQController.checkAction(CurQuest,CurUser,QuestOnMapRadius,Lat,Long)){
                     Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
                             .show();
                 }
             }
+            gps.stopUsingGPS();
         }
-    } //TODO
+    }
 
     public void init(){
         GoogleSignInOptions gso = new GoogleSignInOptions
@@ -141,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CurQuest = new Quest();
         CurQuest.setQuest(Quest);
         CurQController = new QuestController();
-        CurUController = new UserController();
+        //UserController curUController = new UserController();
         Lat = 0;
         Long = 0;
         GPSTracker gps = new GPSTracker(this);
@@ -157,24 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         findViewById(R.id.btaction).setClickable(true);
-    }//TODO
-
-    float distof(double lat,double lng){
-        GPSTracker gps = new GPSTracker(this);
-        if (gps.canGetLocation()) {
-                Lat = gps.getLatitude();
-                Long = gps.getLongitude();
-        }
-        gps.stopUsingGPS();
-        Location loc1,loc2;
-        loc1=new Location("");
-        loc1.setLatitude(Lat);
-        loc1.setLongitude(Long);
-        loc2=new Location("");
-        loc2.setLatitude(lat);
-        loc2.setLongitude(lng);
-        return loc1.distanceTo(loc2);
-    }//TODO
+    }
 
     void setquestonmap(double lat,double lng){
         mMap.clear();
@@ -183,7 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .center(new LatLng(lat, lng))
                     .radius(QuestOnMapRadius)
                     .strokeColor(Color.TRANSPARENT)
-                    .fillColor(0x557f7fff));
+                    .fillColor(Color.TRANSPARENT));
         }
     }
 

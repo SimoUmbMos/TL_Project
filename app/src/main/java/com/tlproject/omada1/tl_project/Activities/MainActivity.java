@@ -24,24 +24,20 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tlproject.omada1.tl_project.BuildConfig;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
+import com.tlproject.omada1.tl_project.Controller.DAOController;
+import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity
+        implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static final int RC_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
     private int decision;
@@ -50,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button action;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
-    private DatabaseReference QuestRef = FirebaseDatabase.getInstance().getReference().child("Quest");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         TextView version = (TextView) findViewById(R.id.version);
         version.setText("ver:"+BuildConfig.VERSION_NAME);
-
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
@@ -95,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.BackToMenu:
-                BackToListMenu();
+                    BackToListMenu();
                 break;
         }
     }
@@ -103,15 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         finish();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
     }
 
     @Override
@@ -134,64 +118,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mAuth.addAuthStateListener(mAuthListener);
     }
 
-    private void init(){
-            final View.OnClickListener ThisClickListener = this;
-            menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
-            EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
-            action = (Button) findViewById(R.id.btProceed);
-            menuSignin.setVisibility(View.INVISIBLE);
-            GoogleSignInOptions gso = new GoogleSignInOptions
-                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this, this)
-                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                    .build();
-            mAuth = FirebaseAuth.getInstance();
-            mAuthListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    final FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
-                        UserRef.child(user.getUid() + ";")
-                                .addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        String lvl = dataSnapshot.child("lvl").getValue(String.class);
-                                        String exp = dataSnapshot.child("exp").getValue(String.class);
-                                        String queston = dataSnapshot.child("queston").getValue(String.class);
-                                        String username =dataSnapshot.child("username").getValue(String.class);
-                                        if (username!=null && lvl != null && exp != null && queston != null) {
-                                            login(username, user.getUid(), queston, lvl, exp);
-                                        } else {
-                                            FirebaseAuth.getInstance().signOut();
-                                        }
-                                    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount acct = result.getSignInAccount();
+                firebaseAuthWithGoogle(acct);
+            }
+        }
+    }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 2: {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    init();
+                } else {
+                    Toast.makeText(MainActivity.this, "Permission denied to read your Account and internet",
+                            Toast.LENGTH_SHORT).show();
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                            new ResultCallback<Status>() {
+                                @Override
+                                public void onResult(@NonNull Status status) {
+                                    if(status.isSuccess()) {
+                                        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+                                        EditText etUsername = (EditText) findViewById(R.id.etUsername);
+                                        tvUsername.setVisibility(View.VISIBLE);
+                                        etUsername.setVisibility(View.VISIBLE);
+                                        EmailAction.setVisibility(View.INVISIBLE);
+                                        menuSignin.setVisibility(View.VISIBLE);
+                                        decision=0;
                                     }
-                                });
-                        Log.d("LoginActivity", "onAuthStateChanged:signed_in:" + user.getUid());
-                    } else {
-                        menuSignin.setVisibility(View.VISIBLE);
-                        decision = 0;
-                        findViewById(R.id.SignInGoogle).setOnClickListener(ThisClickListener);
-                        findViewById(R.id.SignInEmail).setOnClickListener(ThisClickListener);
-                        findViewById(R.id.RegistEmail).setOnClickListener(ThisClickListener);
-                        findViewById(R.id.btProceed).setOnClickListener(ThisClickListener);
-                        findViewById(R.id.BackToMenu).setOnClickListener(ThisClickListener);
-                        Log.d("LoginActivity", "onAuthStateChanged:signed_out");
-                    }
+                                }
+                            });
+                    FirebaseAuth.getInstance().signOut();
                 }
-            };
-    } //TODO
+                break;
+            }
+        }
+    }
 
-    private void  signInGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    private void init(){
+        final View.OnClickListener ThisClickListener = this;
+        menuSignin = (LinearLayout) findViewById(R.id.SignInMenu);
+        EmailAction = (RelativeLayout) findViewById(R.id.EmailAction);
+        action = (Button) findViewById(R.id.btProceed);
+        menuSignin.setVisibility(View.INVISIBLE);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                final FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    LoginFB(user);
+                    Log.d("LoginActivity", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    menuSignin.setVisibility(View.VISIBLE);
+                    decision = 0;
+                    findViewById(R.id.SignInGoogle).setOnClickListener(ThisClickListener);
+                    findViewById(R.id.SignInEmail).setOnClickListener(ThisClickListener);
+                    findViewById(R.id.RegistEmail).setOnClickListener(ThisClickListener);
+                    findViewById(R.id.btProceed).setOnClickListener(ThisClickListener);
+                    findViewById(R.id.BackToMenu).setOnClickListener(ThisClickListener);
+
+                }
+            }
+        };
     }
 
     private void  signInEmail() {
@@ -212,161 +222,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         action.setText("Regist");
     }
 
-    private void  ProceedSignIn() {
-        EditText emailET=(EditText) findViewById(R.id.etEmail);
-        EditText passwordET=(EditText) findViewById(R.id.etPassword);
-        mAuth.signInWithEmailAndPassword(emailET.getText().toString(),passwordET.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("LoginActivity", "signInWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Log.w("LoginActivity", "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, "Fail:Email or Password Wrong",
-                                    Toast.LENGTH_SHORT).show();
-                        }else{
-                            final FirebaseUser user=mAuth.getCurrentUser();
-                            if (user != null) {
-                                EmailAction.setVisibility(View.INVISIBLE);
-                                menuSignin.setVisibility(View.INVISIBLE);
-                                UserRef.child(user.getUid()+";").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        String Uid = user.getUid();
-                                        String queston = dataSnapshot.child("queston").getValue(String.class);
-                                        String lvl=dataSnapshot.child("lvl").getValue(String.class);
-                                        String exp=dataSnapshot.child("exp").getValue(String.class);
-                                        String username =dataSnapshot.child("username").getValue(String.class);
-                                        login(username, Uid,queston,lvl,exp);
-
-                                    }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {}
-                                });
-                            }
-                        }
-                    }
-                });
-    } //TODO
-
-    private void  ProceedRegist() {
-        EditText emailET=(EditText) findViewById(R.id.etEmail);
-        EditText passwordET=(EditText) findViewById(R.id.etPassword);
-        mAuth.createUserWithEmailAndPassword(emailET.getText().toString(),passwordET.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("LoginActivity", "createUserWithEmail:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Fail:Email Exist",
-                                    Toast.LENGTH_SHORT).show();
-                        }else{
-                            FirebaseUser user=mAuth.getCurrentUser();
-                            if(user!=null) {
-                                EmailAction.setVisibility(View.INVISIBLE);
-                                menuSignin.setVisibility(View.INVISIBLE);
-                                EditText usernameET=(EditText) findViewById(R.id.etUsername);
-                                String UserName = usernameET.getText().toString();
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(UserName).build();
-                                user.updateProfile(profileUpdates);
-                                UserRef.child(user.getUid() + ";").child("lvl").setValue("1");
-                                UserRef.child(user.getUid()+";").child("exp").setValue("0");
-                                UserRef.child(user.getUid()+";").child("queston").setValue("1");
-                                UserRef.child(user.getUid()+";").child("username").setValue(UserName);
-                                login(UserName,user.getUid(),"1","1","0");
-                            }
-                        }
-                    }
-                });
-    } //TODO
-
-    private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("LoginActivity", "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            GoogleSignInAccount acct = result.getSignInAccount();
-            firebaseAuthWithGoogle(acct);
-        }
-    } //TODO
-
-    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
-        Log.d("LoginActivity", "firebaseAuthWithGoogle:" + acct.getId());
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("LoginActivity", "signInWithCredential:onComplete:" + task.isSuccessful());
-                        if (!task.isSuccessful()) {
-                            Log.w("LoginActivity", "signInWithCredential", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }else{
-                            final FirebaseUser user=mAuth.getCurrentUser();
-                            if(user!=null) {
-                                EmailAction.setVisibility(View.INVISIBLE);
-                                menuSignin.setVisibility(View.INVISIBLE);
-                                UserRef.child(user.getUid()+";")
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if (dataSnapshot.getValue() == null) {
-                                            UserRef.child(user.getUid() + ";").child("lvl").setValue("1");
-                                            UserRef.child(user.getUid()+";").child("exp").setValue("0");
-                                            UserRef.child(user.getUid()+";").child("queston").setValue("1");
-                                            UserRef.child(user.getUid()+";").child("username").setValue(user.getDisplayName());
-                                            login(user.getDisplayName(),user.getUid(),"1","1","0");
-                                        }else{
-                                            String lvl = dataSnapshot.child("lvl").getValue(String.class);
-                                            String exp =dataSnapshot.child("exp").getValue(String.class);
-                                            String queston =dataSnapshot.child("queston").getValue(String.class);
-                                            String username =dataSnapshot.child("username").getValue(String.class);
-                                            login(username,user.getUid(),queston,lvl, exp);
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {}
-                                });
-                            }
-                        }
-                    }
-                });
-    } //TODO
-
-    private void login(final String displayName, final String uid, final String queston, final String lvl, final String exp) {
-        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
-        EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        tvUsername.setVisibility(View.VISIBLE);
-        etUsername.setVisibility(View.VISIBLE);
-        EmailAction.setVisibility(View.INVISIBLE);
-        menuSignin.setVisibility(View.VISIBLE);
-        decision = 0;
-        QuestRef.child("Quest" + queston)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String descQuest = dataSnapshot.child("desc").getValue(String.class);
-                        String expQuest = dataSnapshot.child("exp").getValue(String.class);
-                        String latQuest = dataSnapshot.child("lat").getValue(String.class);
-                        String lngQuest = dataSnapshot.child("long").getValue(String.class);
-                        String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
-                        String questidQuest = dataSnapshot.child("questid").getValue(String.class);
-                        String Quest = questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" + latQuest + ";" + lngQuest + ";";
-                        String User = displayName + ";" + uid + ";" + queston + ";" + lvl + ";" + exp + ";";
-                        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("User", User);
-                        intent.putExtra("Quest", Quest);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    } //TODO
-
     private void  BackToListMenu() {
         TextView tvUsername=(TextView) findViewById(R.id.tvUsername);
         EditText etUsername=(EditText) findViewById(R.id.etUsername);
@@ -376,41 +231,144 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         menuSignin.setVisibility(View.VISIBLE);
     }
 
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
+    private void  ProceedSignIn() {
+        EditText emailET=(EditText) findViewById(R.id.etEmail);
+        EditText passwordET=(EditText) findViewById(R.id.etPassword);
+        EditText usernameET=(EditText) findViewById(R.id.etUsername);
+        String email = emailET.getText().toString();
+        String pass = passwordET.getText().toString();
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.INVISIBLE);
+        DAOController DAO=new DAOController();
+        String User= DAO.LoginWithEmail(email,pass);
+        if(User!=null){
+            User user=new User();
+            user.setUser(User);
+            String Quest =DAO.getQuest(user.getQueston());
+            if(Quest!=null){
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("User", User);
+                intent.putExtra("Quest", Quest);
+                startActivity(intent);
+            }
+        }
+        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+        tvUsername.setVisibility(View.VISIBLE);
+        usernameET.setVisibility(View.VISIBLE);
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.VISIBLE);
+        decision = 0;
+    }
+
+    private void  ProceedRegist() {
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.INVISIBLE);
+        EditText emailET=(EditText) findViewById(R.id.etEmail);
+        EditText passwordET=(EditText) findViewById(R.id.etPassword);
+        EditText usernameET=(EditText) findViewById(R.id.etUsername);
+        DAOController DAO=new DAOController();
+        String User= DAO.RegistWithEmail(emailET.getText().toString(),passwordET.getText().toString(),usernameET.getText().toString());
+        if(User!=null){
+            User user=new User();
+            user.setUser(User);
+            String Quest =DAO.getQuest(user.getQueston());
+            if(Quest!=null){
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("User", User);
+                intent.putExtra("Quest", Quest);
+                startActivity(intent);
+            }
+        }
+        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+        tvUsername.setVisibility(View.VISIBLE);
+        usernameET.setVisibility(View.VISIBLE);
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.VISIBLE);
+        decision = 0;
+    }
+
+    private void  signInGoogle() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct) {
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.INVISIBLE);
+        DAOController DAO=new DAOController();
+        String User= DAO.LoginWithGoogle(acct);
+        if(User!=null){
+            User user=new User();
+            user.setUser(User);
+            String Quest =DAO.getQuest(user.getQueston());
+            if(Quest!=null){
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("User", User);
+                intent.putExtra("Quest", Quest);
+                startActivity(intent);
+            }
+        }
+        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
+        EditText etUsername = (EditText) findViewById(R.id.etUsername);
+        tvUsername.setVisibility(View.VISIBLE);
+        etUsername.setVisibility(View.VISIBLE);
+        EmailAction.setVisibility(View.INVISIBLE);
+        menuSignin.setVisibility(View.VISIBLE);
+        decision = 0;
+    }
+
+    private void LoginFB(final FirebaseUser user) {
+        FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid() + ";")
+                .addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onResult(@NonNull Status status) {
-                        if(status.isSuccess()) {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final String lvl = dataSnapshot.child("lvl").getValue(String.class);
+                        final String exp = dataSnapshot.child("exp").getValue(String.class);
+                        final String queston = dataSnapshot.child("queston").getValue(String.class);
+                        final String username =dataSnapshot.child("username").getValue(String.class);
+                        if (username!=null && lvl != null && exp != null && queston != null) {
                             TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
                             EditText etUsername = (EditText) findViewById(R.id.etUsername);
                             tvUsername.setVisibility(View.VISIBLE);
                             etUsername.setVisibility(View.VISIBLE);
                             EmailAction.setVisibility(View.INVISIBLE);
                             menuSignin.setVisibility(View.VISIBLE);
-                            decision=0;
+                            decision = 0;
+                            FirebaseDatabase.getInstance().getReference().child("Quest").child("Quest" + queston)
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            String descQuest = dataSnapshot.child("desc").getValue(String.class);
+                                            String expQuest = dataSnapshot.child("exp").getValue(String.class);
+                                            String latQuest = dataSnapshot.child("lat").getValue(String.class);
+                                            String lngQuest = dataSnapshot.child("long").getValue(String.class);
+                                            String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
+                                            String questidQuest = dataSnapshot.child("questid").getValue(String.class);
+                                            String Quest = questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" + latQuest + ";" + lngQuest + ";";
+                                            String User = username + ";" + user.getUid() + ";" + queston + ";" + lvl + ";" + exp + ";";
+                                            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            intent.putExtra("User", User);
+                                            intent.putExtra("Quest", Quest);
+                                            startActivity(intent);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        } else {
+                            FirebaseAuth.getInstance().signOut();
                         }
                     }
-                });
-        FirebaseAuth.getInstance().signOut();
-    } //TODO
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 2: {
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    init();
-                } else {
-                    Toast.makeText(MainActivity.this, "Permission denied to read your Account and internet",
-                            Toast.LENGTH_SHORT).show();
-                    signOut();
-                }
-                break;
-            }
-        }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
     }
 }

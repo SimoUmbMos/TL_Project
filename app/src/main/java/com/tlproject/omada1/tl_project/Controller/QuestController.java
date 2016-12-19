@@ -1,11 +1,16 @@
 package com.tlproject.omada1.tl_project.Controller;
 
+import android.location.Location;
+import android.renderscript.Double2;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
+import com.tlproject.omada1.tl_project.Model.User;
 
 /**
  * Created by Chris on 4/11/2016.
@@ -38,5 +43,36 @@ public class QuestController implements QuestInterface {
     @Override
     public boolean QuestIsTrue(Quest CurQuest) {
         return (CurQuest.getLat()!=0 && CurQuest.getLng()!=0);
+    }
+
+    @Override
+    public boolean checkAction(Quest quest, User User, int QuestRadius,Double Lat,Double Long){
+                Location loc1,loc2;
+                loc1=new Location("");
+                loc1.setLatitude(Lat);
+                loc1.setLongitude(Long);
+                loc2=new Location("");
+                loc2.setLatitude( quest.getLat());
+                loc2.setLongitude(quest.getLng());
+                if (loc1.distanceTo(loc2) <= QuestRadius) {
+                    new UserController().QuestComplete(User, quest);
+                    NextQuest(quest);
+                    return true;
+                }
+        return false;
+    }
+    @Override
+    public boolean checkQuestMark(Quest quest,int QuestRadius,Double Lat,Double Long){
+        Location loc1,loc2;
+        loc1=new Location("");
+        loc1.setLatitude(Lat);
+        loc1.setLongitude(Long);
+        loc2=new Location("");
+        loc2.setLatitude( quest.getLat());
+        loc2.setLongitude(quest.getLng());
+        if (loc1.distanceTo(loc2) <= QuestRadius) {
+            return true;
+        }
+        return false;
     }
 }

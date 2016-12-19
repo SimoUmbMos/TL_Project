@@ -12,8 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.tlproject.omada1.tl_project.Controller.DAOController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
@@ -34,14 +33,12 @@ public class ProfileActivity extends AppCompatActivity {
         CurUser = new User();
         CurUser.setUser(User);
 
-
         TextView username=(TextView) findViewById(R.id.usernameprofile);
         TextView lvl=(TextView) findViewById(R.id.lvl);
         TextView curexp=(TextView) findViewById(R.id.curexp);
         TextView nextlvlexp=(TextView) findViewById(R.id.nextlvlexp);
         TextView questdesc=(TextView) findViewById(R.id.questdesc);
         ProgressBar exp=(ProgressBar) findViewById(R.id.expbar);
-
         username.setText(CurUser.getUsername());
         lvl.setText(String.valueOf(CurUser.getLvl()));
         UserController control=new UserController();
@@ -67,10 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
         ButtonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
-                dbref.child("lvl").setValue("1");
-                dbref.child("exp").setValue("0");
-                dbref.child("queston").setValue("1");
+                new DAOController().ResetUser(CurUser.getUserid());
                 dialog.dismiss();
             }
         });
@@ -82,20 +76,19 @@ public class ProfileActivity extends AppCompatActivity {
         });
         dialog.show();
 
-    } //TODO
+    }
 
     public void Edit(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("New username:");
         final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_VARIATION_NORMAL);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
                 String NewUsername = input.getText().toString();
-                dbref.child("username").setValue(NewUsername);
+                new DAOController().EditUser(CurUser.getUserid(),NewUsername);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -105,5 +98,5 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         builder.show();
-    } //TODO
+    }
 }
