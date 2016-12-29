@@ -1,9 +1,12 @@
 package com.tlproject.omada1.tl_project.Activities;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -67,18 +70,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
         switch (view.getId()) {
             case R.id.SignInGoogle:
-                if(new CheckController().GpsEnable(this))
-                signInGoogle();
+                if(new CheckController().GpsEnable(locationManager))   signInGoogle();
+                else dialog();
                 break;
             case R.id.SignInEmail:
-                if(new CheckController().GpsEnable(this))
-                signInEmail();
+                if(new CheckController().GpsEnable(locationManager))   signInEmail();
+                else dialog();
                 break;
             case R.id.RegistEmail:
-                if(new CheckController().GpsEnable(this))
-                RegistEmail();
+                if(new CheckController().GpsEnable(locationManager))   RegistEmail();
+                else dialog();
                 break;
             case R.id.btProceed:
                 if(decision==1) {
@@ -370,5 +374,27 @@ public class MainActivity extends AppCompatActivity
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+    }
+    private void dialog(){
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.setTitle("Gps Not Enable");
+        Button ButtonYes = (Button) dialog.findViewById(R.id.btn_yes);
+        Button ButtonNo = (Button) dialog.findViewById(R.id.btn_no);
+        ButtonYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+        ButtonNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }
