@@ -17,22 +17,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-/**
- * Created by sorar on 19/12/2016.
- */
-
 public class DAOController implements DAOInterface {
     @Override
-    public void ResetUser(String Userid) {
-        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(Userid + ";");
+    public void ResetUser(DatabaseReference dbref) {
         dbref.child("lvl").setValue("1");
         dbref.child("exp").setValue("0");
         dbref.child("queston").setValue("1");
     }
 
     @Override
-    public void EditUser(String Userid,String NewUsername) {
-        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(Userid + ";");
+    public void EditUser(DatabaseReference dbref,String NewUsername) {
         dbref.child("username").setValue(NewUsername);
     }
 

@@ -3,6 +3,7 @@ package com.tlproject.omada1.tl_project.Activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +28,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
-import com.tlproject.omada1.tl_project.GPSTrack.GPSTracker;
+import com.tlproject.omada1.tl_project.Service.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
@@ -104,7 +105,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void ActionClick(View view) {
         if(CurQController.QuestIsTrue(CurQuest)) {
-            GPSTracker gps = new GPSTracker(this);
+            LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+            GPSTracker gps = new GPSTracker(locationManager);
             if (gps.canGetLocation()) {
                 Lat = gps.getLatitude();
                 Long = gps.getLongitude();
@@ -135,10 +137,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CurQuest = new Quest();
         CurQuest.setQuest(Quest);
         CurQController = new QuestController();
-        //UserController curUController = new UserController();
         Lat = 0;
         Long = 0;
-        GPSTracker gps = new GPSTracker(this);
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        GPSTracker gps = new GPSTracker(locationManager);
         if (gps.canGetLocation()) {
             Lat = gps.getLatitude();
             Long = gps.getLongitude();

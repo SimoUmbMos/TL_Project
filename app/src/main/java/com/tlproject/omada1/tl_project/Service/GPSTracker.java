@@ -1,7 +1,6 @@
-package com.tlproject.omada1.tl_project.GPSTrack;
+package com.tlproject.omada1.tl_project.Service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,8 +12,6 @@ import com.tlproject.omada1.tl_project.Controller.CheckController;
 
 
 public class GPSTracker extends Service implements LocationListener {
-
-    private final Context mContext;
 
     // flag for GPS status
     boolean isGPSEnabled = false;
@@ -38,15 +35,14 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context) {
-        this.mContext = context;
+    public GPSTracker(LocationManager lm) {
+        locationManager = lm;
         getLocation();
     }
 
     public Location getLocation() {
         try {
             CheckController GpsEnable=new CheckController();
-            locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             // getting GPS status
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -54,7 +50,7 @@ public class GPSTracker extends Service implements LocationListener {
             // getting network status
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if(GpsEnable.GpsEnable(mContext)) {
+            if(GpsEnable.GpsEnable(locationManager)) {
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);

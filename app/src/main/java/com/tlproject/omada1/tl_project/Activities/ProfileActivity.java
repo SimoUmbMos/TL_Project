@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tlproject.omada1.tl_project.Controller.DAOController;
 import com.tlproject.omada1.tl_project.Controller.UserController;
 import com.tlproject.omada1.tl_project.Model.Quest;
@@ -64,7 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
         ButtonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DAOController().ResetUser(CurUser.getUserid());
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
+                new DAOController().ResetUser(dbref);
                 dialog.dismiss();
             }
         });
@@ -88,7 +92,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String NewUsername = input.getText().toString();
-                new DAOController().EditUser(CurUser.getUserid(),NewUsername);
+
+                DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
+                new DAOController().EditUser(dbref,NewUsername);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

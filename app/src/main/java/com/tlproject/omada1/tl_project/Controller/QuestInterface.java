@@ -11,5 +11,4 @@ public interface QuestInterface {
     void NextQuest(Quest CurQuest);
     boolean QuestIsTrue(Quest CurQuest);
     boolean checkAction(Quest quest, User User, int QuestRadius, Double Lat, Double Long);
-    public boolean checkQuestMark(Quest quest,int QuestRadius,Double Lat,Double Long);
 }

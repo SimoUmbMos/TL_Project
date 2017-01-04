@@ -8,6 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -37,6 +38,10 @@
             android:name=".Activities.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>
+        <service android:name=".Service.MyFirebaseMessagingService">
+            <intent-filter><action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
