@@ -35,7 +35,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tlproject.omada1.tl_project.BuildConfig;
 import com.tlproject.omada1.tl_project.Controller.CheckController;
-import com.tlproject.omada1.tl_project.Controller.DAOController;
+import com.tlproject.omada1.tl_project.Service.DAOController;
 import com.tlproject.omada1.tl_project.Model.User;
 import com.tlproject.omada1.tl_project.R;
 

@@ -3,6 +3,7 @@ package com.tlproject.omada1.tl_project.Activities;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
+import com.tlproject.omada1.tl_project.Service.DAOController;
 import com.tlproject.omada1.tl_project.Controller.QuestController;
 import com.tlproject.omada1.tl_project.Service.GPSTracker;
 import com.tlproject.omada1.tl_project.Model.Quest;
@@ -61,9 +63,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
         setquestonmap(CurQuest.getLat(), CurQuest.getLng());
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-        mMap.setMyLocationEnabled(true);
+        Lat = 0;
+        Long = 0;
+        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+        GPSTracker gps = new GPSTracker(locationManager);
+        if (gps.canGetLocation()) {
+            Lat = gps.getLatitude();
+            Long = gps.getLongitude();
+        }
+        gps.stopUsingGPS();
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(Lat,Long)));
         mMap.animateCamera(zoom);
     }
@@ -110,7 +121,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (gps.canGetLocation()) {
                 Lat = gps.getLatitude();
                 Long = gps.getLongitude();
-                if(!CurQController.checkAction(CurQuest,CurUser,QuestOnMapRadius,Lat,Long)){
+                DAOController Dao=new DAOController();
+                Location loc1, loc2;
+                loc1 = new Location("");
+                loc1.setLatitude(Lat);
+                loc1.setLongitude(Long);
+                loc2 = new Location("");
+                loc2.setLatitude(CurQuest.getLat());
+                loc2.setLongitude(CurQuest.getLng());
+                if(!CurQController.checkAction(CurQuest,CurUser,QuestOnMapRadius,loc1,loc2,Dao)){
                     Toast.makeText(this, "You are not on the quest area", Toast.LENGTH_SHORT)
                             .show();
                 }
@@ -137,15 +156,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CurQuest = new Quest();
         CurQuest.setQuest(Quest);
         CurQController = new QuestController();
-        Lat = 0;
-        Long = 0;
-        LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        GPSTracker gps = new GPSTracker(locationManager);
-        if (gps.canGetLocation()) {
-            Lat = gps.getLatitude();
-            Long = gps.getLongitude();
-        }
-        gps.stopUsingGPS();
         TextView usernamedsp = (TextView) findViewById(R.id.usernamedisp);
         usernamedsp.setText(CurUser.getUsername());
         usernamedsp.setTextColor(Color.WHITE);

@@ -1,4 +1,4 @@
-package com.tlproject.omada1.tl_project.Controller;
+package com.tlproject.omada1.tl_project.Service;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,18 +16,57 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tlproject.omada1.tl_project.Model.Quest;
+import com.tlproject.omada1.tl_project.Model.User;
 
 public class DAOController implements DAOInterface {
     @Override
-    public void ResetUser(DatabaseReference dbref) {
-        dbref.child("lvl").setValue("1");
-        dbref.child("exp").setValue("0");
-        dbref.child("queston").setValue("1");
+    public boolean ResetUser(User CurUser) {
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
+        Task<Void> ans1 = dbref.child("lvl").setValue("1");
+        Task<Void> ans2=dbref.child("exp").setValue("0");
+        Task<Void> ans3=dbref.child("queston").setValue("1");
+        return (ans1.isSuccessful() && ans2.isSuccessful() && ans3.isSuccessful());
     }
 
     @Override
-    public void EditUser(DatabaseReference dbref,String NewUsername) {
-        dbref.child("username").setValue(NewUsername);
+    public boolean EditUser(User CurUser,String NewUsername) {
+        DatabaseReference dbref = FirebaseDatabase.getInstance().getReference().child("Users").child(CurUser.getUserid() + ";");
+        Task<Void> ans1 = dbref.child("username").setValue(NewUsername);
+        return (ans1.isSuccessful());
+    }
+
+    @Override
+    public boolean save(final Quest CurQuest, User CurUser) {
+        DatabaseReference dbrefq= FirebaseDatabase.getInstance().getReference().child("Quest");
+        DatabaseReference dbrefu = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child(CurUser.getUserid() + ";");
+        String nextquest = String.valueOf(CurQuest.getNextIdQuest());
+        dbrefu.child("lvl").setValue(Integer.toString(CurUser.getLvl()));
+        dbrefu.child("exp").setValue(Integer.toString(CurUser.getExp()));
+        dbrefu.child("queston").setValue(String.valueOf(CurQuest.getNextIdQuest()));
+        final boolean[] ans = new boolean[1];
+
+        dbrefq.child("Quest" + nextquest).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String descQuest = dataSnapshot.child("desc").getValue(String.class);
+                String expQuest = dataSnapshot.child("exp").getValue(String.class);
+                String latQuest = dataSnapshot.child("lat").getValue(String.class);
+                String lngQuest = dataSnapshot.child("long").getValue(String.class);
+                String nextquestidQuest = dataSnapshot.child("nextquestid").getValue(String.class);
+                String questidQuest = dataSnapshot.child("questid").getValue(String.class);
+                CurQuest.setQuest(questidQuest + ";" + descQuest + ";" + expQuest + ";" + nextquestidQuest + ";" +
+                        latQuest + ";" + lngQuest + ";");
+                ans[0] = true;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                ans[0] = false;
+            }
+        });
+        return ans[0];
     }
 
     @Override
@@ -161,5 +200,6 @@ public class DAOController implements DAOInterface {
                 });
         return Quest[0];
     }
+
 
 }
